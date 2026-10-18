@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Caravan Challenge · Stop 3 · Seasons Street</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,900;1,9..144,500&family=Nunito:wght@400;600;700;800;900&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --lapis: #1d3b8b; --deep: #13285f; --turq: #0e9f9a; --saffron: #f3a21b; --pome: #d1344b;
+          --sand: #fbf4e8; --clay: #eadcc5; --ink: #1c1b2e; --muted: #6b6478; --ok: #17a362; --okbg: #dff5e9; --badbg: #fde4e8; }
+  * { box-sizing: border-box; }
+  html { background: var(--sand); }
+  body { margin: 0; color: var(--ink); background: var(--sand); font: 17px/1.55 "Nunito", system-ui, -apple-system, "Segoe UI", Arial, sans-serif; }
+  .bg { position: fixed; inset: 0; width: 100%; height: 100%; opacity: .07; pointer-events: none; z-index: 0; }
+  main, .top { position: relative; z-index: 1; }
+  .wrap { max-width: 680px; margin: 0 auto; padding: 16px; }
+  h1, h2, .serif { font-family: "Fraunces", Georgia, serif; line-height: 1.08; }
+  .kicker { font-weight: 900; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--turq); }
+  .hand { font-family: "Caveat", cursive; font-size: 22px; line-height: 1.15; color: var(--lapis); }
+  .hidden { display: none !important; }
+  button { font: inherit; cursor: pointer; border: 0; color: inherit; }
+  .btn { display: block; width: 100%; background: var(--saffron); color: var(--ink); font-weight: 900; font-size: 18px; border-radius: 16px; padding: 15px 22px; box-shadow: 0 4px 0 #b97708; }
+  .btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #b97708; }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .btn.blue { background: var(--lapis); color: #fff; box-shadow: 0 4px 0 #0c1b44; }
+  .btn.ghost { background: #fff; box-shadow: none; border: 2px solid var(--clay); }
+
+  /* ---------- start (book opener) ---------- */
+  .hero { position: relative; margin: 6px 0 34px; }
+  .hero svg, .hero img { display: block; width: 100%; height: auto; aspect-ratio: 640 / 300; object-fit: cover; border-radius: 26px; box-shadow: 0 10px 0 rgba(29,59,139,.12); }
+  .hero .tag { position: absolute; left: -6px; bottom: -22px; background: var(--pome); color: #fff; font: 900 26px "Fraunces", Georgia, serif; padding: 8px 18px; border-radius: 12px; transform: rotate(-2deg); box-shadow: 0 5px 0 var(--deep); }
+  .route-mini { display: flex; gap: 3px; align-items: center; margin: 10px 0 14px; flex-wrap: wrap; }
+  .route-mini i { width: 5px; height: 5px; border-radius: 50%; background: var(--clay); }
+  .route-mini i.d { background: var(--turq); } .route-mini i.n { width: 12px; height: 12px; background: var(--pome); box-shadow: 0 0 0 4px rgba(209,52,75,.2); }
+  .route-mini span { flex-basis: 100%; font-size: 12px; font-weight: 800; color: var(--muted); margin-top: 4px; letter-spacing: .08em; }
+  .opener h1 { font-size: 48px; font-weight: 900; color: var(--deep); margin: 6px 0 4px; letter-spacing: -.01em; }
+  .opener .sub { font: italic 500 21px "Fraunces", Georgia, serif; color: var(--pome); }
+  .pen { display: flex; gap: 12px; align-items: flex-start; margin: 20px 0; }
+  .avatar { flex: none; width: 56px; height: 56px; border-radius: 50%; background: var(--lapis); color: var(--saffron); border: 4px solid var(--saffron); display: grid; place-items: center; font: 900 12px/1 "Fraunces", Georgia; text-align: center; }
+  .bubble { background: #fff; border: 2px solid var(--clay); border-radius: 16px; padding: 10px 16px; }
+  .card { background: #fff; border-radius: 22px; padding: 18px; border: 2px solid var(--clay); margin: 14px 0; }
+  .card label { display: block; font-weight: 800; margin: 8px 0 6px; color: var(--muted); font-size: 14px; }
+  .card input { width: 100%; padding: 13px 14px; border-radius: 12px; border: 2px solid var(--clay); background: var(--sand); font: inherit; color: var(--ink); }
+  .card input:focus, textarea:focus { outline: none; border-color: var(--saffron); }
+  .cities { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 6px; margin-top: 14px; text-align: center; }
+  .cities div { background: var(--sand); border-radius: 12px; padding: 8px 4px; font-size: 12px; font-weight: 800; color: var(--muted); line-height: 1.25; }
+  .cities b { display: block; font: 900 15px "Fraunces", Georgia; color: var(--deep); }
+
+  /* ---------- sticky route ---------- */
+  .top { position: sticky; top: 0; z-index: 5; background: rgba(251,244,232,.94); backdrop-filter: blur(6px); border-bottom: 2px solid var(--clay); }
+  .top .wrap { padding: 10px 16px 8px; }
+  .stats { display: flex; justify-content: space-between; align-items: center; font-weight: 900; }
+  .stats .pts { color: var(--pome); font: 900 22px "Fraunces", Georgia; }
+  .stats .cnt { color: var(--muted); font-size: 14px; }
+  .stats .streak { background: #fff; border: 2px solid var(--clay); border-radius: 99px; padding: 1px 12px; font-size: 15px; transition: transform .2s; }
+  .stats .streak.hot { transform: scale(1.18); border-color: var(--saffron); }
+  .route { position: relative; height: 46px; margin-top: 4px; }
+  .route .line, .route .fill { position: absolute; left: 12px; top: 33px; height: 5px; border-radius: 9px; }
+  .route .line { right: 12px; background: var(--clay); }
+  .route .fill { background: linear-gradient(90deg, var(--turq), var(--saffron)); transition: width .45s; }
+  .route .city { position: absolute; top: 28px; width: 15px; height: 15px; margin-left: -7px; border-radius: 50%; background: var(--sand); border: 3px solid var(--clay); }
+  .route .city.done { background: var(--saffron); border-color: var(--saffron); }
+  .route .rider { position: absolute; top: 0; width: 44px; height: 33px; margin-left: -24px; color: var(--saffron); transition: left .45s; filter: drop-shadow(0 2px 0 rgba(0,0,0,.15)); }
+  .route .rider.walk { animation: walk .45s ease; }
+  @keyframes walk { 30% { transform: translateY(-4px) rotate(-3deg); } 60% { transform: translateY(0) rotate(2deg); } }
+  .citynames { display: flex; justify-content: space-between; font-size: 10px; font-weight: 900; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-top: 2px; }
+
+  /* ---------- question card ---------- */
+  .move { display: flex; align-items: center; gap: 10px; margin: 8px 0 10px; }
+  .move .num { width: 38px; height: 38px; border-radius: 50%; background: var(--saffron); display: grid; place-items: center; font: 900 18px "Fraunces", Georgia; flex: none; }
+  .move h2 { font-size: 26px; color: var(--deep); margin: 0; }
+  .move small { margin-left: auto; font-weight: 900; font-size: 12px; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; }
+  .q { background: #fff; border-radius: 24px; padding: 20px; border-top: 7px solid var(--c, var(--turq)); box-shadow: 0 8px 0 rgba(29,59,139,.08); animation: pop .3s ease; }
+  @keyframes pop { from { transform: translateY(12px); opacity: 0; } to { transform: none; opacity: 1; } }
+  .q .kind { font-weight: 900; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--c, var(--turq)); }
+  .q .stem { font: 700 22px/1.28 "Fraunces", Georgia, serif; margin: 6px 0 16px; }
+  .opts { display: grid; gap: 10px; }
+  .opts.tf { grid-template-columns: repeat(3, 1fr); }
+  .opt { text-align: left; background: var(--sand); border: 2px solid var(--clay); border-radius: 14px; padding: 13px 14px; font-weight: 700; display: flex; gap: 10px; align-items: flex-start; transition: transform .1s, border-color .1s; }
+  .opts.tf .opt { justify-content: center; text-align: center; }
+  .opt:hover:not(:disabled) { border-color: var(--lapis); transform: translateY(-1px); }
+  .opt .k { flex: none; width: 27px; height: 27px; border-radius: 8px; background: var(--lapis); color: #fff; display: grid; place-items: center; font-size: 13px; font-weight: 900; }
+  .opt.right { background: var(--okbg); border-color: var(--ok); }
+  .opt.wrong { background: var(--badbg); border-color: var(--pome); animation: shake .35s; }
+  .opt:disabled { cursor: default; }
+  @keyframes shake { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+  .sent { display: block; width: 100%; text-align: left; background: var(--sand); border: 2px dashed var(--clay); border-radius: 12px; padding: 10px 12px; margin: 8px 0; font-weight: 600; }
+  .sent:hover:not(:disabled) { border-color: var(--lapis); border-style: solid; }
+  .sent.right { background: var(--okbg); border: 2px solid var(--ok); } .sent.wrong { background: var(--badbg); border: 2px solid var(--pome); }
+  .slots { display: grid; gap: 8px; margin-bottom: 12px; }
+  .slot { display: grid; grid-template-columns: 112px 1fr; gap: 10px; align-items: stretch; }
+  .slot .lab { background: var(--deep); color: var(--saffron); border-radius: 12px; display: grid; place-items: center; font-weight: 900; font-size: 12px; text-align: center; padding: 6px; word-break: break-word; }
+  .slot .fill { min-height: 48px; border: 2px dashed var(--clay); border-radius: 12px; padding: 8px 12px; font-weight: 600; background: var(--sand); }
+  .slot .fill.on { border-style: solid; border-color: var(--lapis); background: #eef2fb; cursor: pointer; }
+  .slot .fill.right { border-color: var(--ok); background: var(--okbg); } .slot .fill.wrong { border-color: var(--pome); background: var(--badbg); }
+  .tiles .sent { border-style: solid; background: #fff; }
+  textarea { width: 100%; min-height: 130px; border: 2px solid var(--clay); border-radius: 14px; padding: 12px; font: 600 17px/1.5 "Nunito", sans-serif; background: var(--sand); resize: vertical; }
+  .checks { list-style: none; padding: 0; margin: 10px 0; display: grid; gap: 6px; }
+  .checks li { background: var(--sand); border-radius: 10px; padding: 7px 12px; font-weight: 700; color: var(--muted); }
+  .checks li.on { background: var(--okbg); color: #0e6b40; }
+  .checks li::before { content: "○  "; } .checks li.on::before { content: "✓  "; }
+  .wc { font-weight: 800; font-size: 14px; color: var(--muted); text-align: right; }
+  .fb { margin-top: 14px; border-radius: 16px; padding: 12px 16px; display: flex; gap: 10px; align-items: flex-start; }
+  .fb.ok { background: var(--okbg); } .fb.no { background: var(--badbg); }
+  .fb .hand { font-size: 21px; } .fb.ok .hand { color: #0e6b40; } .fb.no .hand { color: #8f1d2e; }
+  .fb .avatar { width: 46px; height: 46px; border-width: 3px; font-size: 9px; }
+  .avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
+  .avatar.pic { background: #fff; }
+  .next { margin-top: 14px; }
+  .article { background: #fff; border-radius: 22px; padding: 4px 18px; margin-bottom: 14px; border: 2px solid var(--clay); }
+  .article summary { cursor: pointer; padding: 12px 0; font: 900 20px "Fraunces", Georgia; color: var(--deep); list-style: none; }
+  .article summary::after { content: "  ▾"; color: var(--turq); }
+  .article p { margin: 0 0 12px; font-size: 16px; }
+  .article .L { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 6px; background: var(--turq); color: #fff; font-weight: 900; font-size: 13px; margin-right: 6px; }
+  .toast { position: fixed; left: 50%; top: 110px; transform: translateX(-50%); background: var(--pome); color: #fff; font-weight: 900; padding: 8px 18px; border-radius: 99px; z-index: 9; animation: toast 1.4s forwards; }
+  @keyframes toast { 0% { opacity: 0; transform: translate(-50%, 10px); } 15%, 75% { opacity: 1; transform: translate(-50%, 0); } 100% { opacity: 0; } }
+
+  /* ---------- passport ---------- */
+  .passport { background: #fff; border-radius: 26px; padding: 22px 18px; position: relative; border: 2px solid var(--clay); }
+  .passport::after { content: ""; position: absolute; inset: 9px; border: 2px dashed var(--clay); border-radius: 18px; pointer-events: none; }
+  .passport .head { display: flex; justify-content: space-between; font-weight: 900; font-size: 12px; letter-spacing: .16em; color: var(--lapis); text-transform: uppercase; }
+  .stampwrap { display: flex; justify-content: center; margin: 8px 0 4px; }
+  .stamp { width: 200px; height: 200px; transform: rotate(-9deg); animation: stamp .55s cubic-bezier(.2,1.6,.4,1); }
+  @keyframes stamp { from { transform: rotate(-9deg) scale(2.3); opacity: 0; } to { transform: rotate(-9deg) scale(1); opacity: 1; } }
+  .who { text-align: center; font: 900 28px "Fraunces", Georgia; color: var(--deep); }
+  .grp { text-align: center; color: var(--muted); font-weight: 700; }
+  .meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+  .meta div { background: var(--sand); border-radius: 12px; padding: 8px 10px; font-size: 13px; color: var(--muted); font-weight: 700; }
+  .meta b { display: block; color: var(--ink); font-size: 17px; }
+  .bars .r { display: grid; grid-template-columns: 1fr 100px 40px; gap: 8px; align-items: center; font-size: 13px; font-weight: 800; margin: 6px 0; }
+  .bars .b { height: 9px; border-radius: 9px; background: var(--clay); overflow: hidden; }
+  .bars .b i { display: block; height: 100%; background: linear-gradient(90deg, var(--turq), var(--lapis)); }
+  .mywrite { background: var(--sand); border-left: 5px solid var(--saffron); border-radius: 0 12px 12px 0; padding: 8px 12px; margin-top: 12px; font-size: 15px; }
+  .mywrite small { display: block; font-weight: 900; color: var(--muted); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
+  .shot { text-align: center; font-weight: 900; color: var(--pome); margin-top: 12px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .review .it { border-left: 4px solid var(--ok); padding: 6px 10px; margin: 8px 0; background: var(--sand); border-radius: 0 10px 10px 0; font-size: 15px; }
+  .review .it.x { border-color: var(--pome); }
+  /* ---------- Essay Domino ---------- */
+  .essay { display: grid; gap: 8px; margin-bottom: 14px; }
+  .para { border-radius: 14px; padding: 10px 12px; font-size: 15px; line-height: 1.5; border: 2px solid transparent; }
+  .para.intro { background: #d7e6f7; } .para.body { background: #fdf0d3; } .para.opp { background: #d9f0ee; } .para.concl { background: #f5dde1; }
+  .para.now { border-color: var(--lapis); background-color: #fff; }
+  .para .pl { display: block; font-weight: 900; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--deep); margin-bottom: 2px; }
+  .para .fn { display: inline-block; font-weight: 900; font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: #fff; background: var(--lapis); border-radius: 6px; padding: 0 6px; margin-right: 4px; vertical-align: 1px; }
+  .para .slotnext { display: block; margin-top: 6px; border: 2px dashed var(--saffron); border-radius: 10px; padding: 6px 10px; font-weight: 800; color: var(--muted); }
+  .para .slotnext b { color: var(--pome); }
+  .tilebox .sent { border-style: solid; background: #fff; }
+  .tilebox .sent.wrong { animation: shake .35s; }
+  .why { font-family: "Caveat", cursive; font-size: 20px; color: #8f1d2e; margin: 4px 0 0; }
+  .gtext { font-size: 17px; line-height: 2.1; }
+  .gap { display: inline-block; min-width: 120px; min-height: 30px; vertical-align: middle; border: 2px dashed var(--clay); border-radius: 10px; padding: 1px 10px; margin: 0 2px; background: var(--sand); font-weight: 800; line-height: 1.5; text-align: center; }
+  .gap.sel { border-color: var(--saffron); border-style: solid; }
+  .gap.on { border-style: solid; border-color: var(--lapis); background: #eef2fb; }
+  .gap.right { border-color: var(--ok); background: var(--okbg); } .gap.wrong { border-color: var(--pome); background: var(--badbg); }
+  .bank { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+  .bank button { background: #fff; border: 2px solid var(--lapis); border-radius: 99px; padding: 6px 14px; font-weight: 800; }
+  .ttext { font-size: 18px; line-height: 2.2; }
+  .tin { font: 800 17px "Nunito", sans-serif; color: var(--lapis); border: 0; border-bottom: 3px solid var(--clay); background: var(--sand); border-radius: 6px 6px 0 0; padding: 2px 6px; margin: 0 2px; outline: none; }
+  .tin:focus { border-color: var(--saffron); }
+  .tin.right { border-color: var(--ok); background: var(--okbg); } .tin.wrong { border-color: var(--pome); background: var(--badbg); }
+  .fix { font-weight: 900; color: var(--ok); font-size: 15px; margin: 0 4px; }
+  @media (max-width: 440px) { .opts.tf { grid-template-columns: 1fr; } .opener h1 { font-size: 38px; } .q .stem { font-size: 20px; } .slot { grid-template-columns: 84px 1fr; } .hero .tag { font-size: 21px; } }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute">
+  <defs>
+    <!-- camel facing RIGHT (original flat silhouette) -->
+    <symbol id="camel" viewBox="0 0 64 48">
+      <path d="M8 22 Q6 26 6 31" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M9 24 Q9 15 16 14 Q20 6 26 12 Q30 7 35 13 Q40 16 40 22 L44 12 Q46 6 51 6 Q57 6 58 9 Q58 11 54 11 L51 12 L46 26 Q44 31 37 31 L14 31 Q9 30 9 24 Z" fill="currentColor"/>
+      <g fill="currentColor"><rect x="13" y="29" width="3.2" height="16" rx="1.5"/><rect x="18.5" y="29" width="3.2" height="16" rx="1.5"/><rect x="31" y="29" width="3.2" height="16" rx="1.5"/><rect x="36.5" y="29" width="3.2" height="16" rx="1.5"/></g>
+      <circle cx="53" cy="8.3" r="1.1" fill="#1c1b2e"/>
+    </symbol>
+    <pattern id="girih" width="40" height="40" patternUnits="userSpaceOnUse">
+      <g fill="none" stroke="#1d3b8b" stroke-width="1.2"><rect x="10" y="10" width="20" height="20"/><rect x="10" y="10" width="20" height="20" transform="rotate(45 20 20)"/><path d="M0 0 L10 10 M40 0 L30 10 M0 40 L10 30 M40 40 L30 30"/></g>
+    </pattern>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f9d9a6"/><stop offset="1" stop-color="#fbf0dc"/></linearGradient>
+    <!-- Silk Road scene: sun, Bukhara-style skyline, dunes, caravan -->
+    <symbol id="scene" viewBox="0 0 640 300">
+      <rect width="640" height="300" fill="url(#sky)"/>
+      <circle cx="505" cy="92" r="46" fill="#f6a91d" opacity=".9"/>
+      <g fill="#7f97c9" opacity=".55">
+        <rect x="60" y="120" width="26" height="110"/><path d="M56 120 h34 l-4 -12 h-26 z"/><rect x="66" y="96" width="14" height="12"/><path d="M64 96 q9 -16 18 0 z"/>
+        <path d="M120 230 v-62 q35 -46 70 0 v62 z"/><rect x="110" y="166" width="90" height="64"/>
+        <path d="M230 230 v-70 h110 v70 z"/><path d="M260 230 v-46 q25 -28 50 0 v46 z" fill="#5f79b5"/>
+        <path d="M352 230 v-40 q30 -50 60 0 v40 z"/>
+      </g>
+      <g fill="#1d3b8b">
+        <path d="M150 196 q38 -56 76 0 z" fill="#12b3ad"/><rect x="146" y="194" width="84" height="8" fill="#f6a91d"/>
+        <rect x="140" y="202" width="96" height="66"/>
+        <path d="M170 268 v-34 q18 -24 36 0 v34 z" fill="#101f4d"/>
+        <rect x="248" y="140" width="20" height="128"/><path d="M244 140 h28 l-3 -10 h-22 z" fill="#d1344b"/><rect x="252" y="122" width="12" height="8"/><path d="M250 122 q8 -14 16 0 z" fill="#12b3ad"/>
+      </g>
+      <path d="M0 262 Q120 236 240 258 T480 252 T640 246 V300 H0 Z" fill="#eccf9c"/>
+      <path d="M0 280 Q160 258 320 278 T640 270 V300 H0 Z" fill="#e2b979"/>
+      <g color="#7a4a1c">
+        <use href="#camel" x="330" y="220" width="64" height="48"/>
+        <use href="#camel" x="392" y="214" width="70" height="52"/>
+        <use href="#camel" x="460" y="208" width="78" height="58"/>
+      </g>
+      <path d="M352 232 L398 228 M420 226 L466 220" stroke="#7a4a1c" stroke-width="1.5"/>
+    </symbol>
+  </defs>
+</svg>
+
+<svg class="bg"><rect width="100%" height="100%" fill="url(#girih)"/></svg>
+
+<main id="start" class="wrap opener">
+  <div class="route-mini" id="routeMini"></div>
+  <div class="hero" id="hero"></div>
+  <div class="kicker">Caravan Challenge · Types of Paragraphs</div>
+  <h1>Seasons Street</h1>
+  <div class="sub">Landscapes and Seasons of Uzbekistan</div>
+  <div class="pen"><div class="avatar">PROF<br>PEN</div><div class="bubble hand">Six cities. One stamp. Read, think, build and write — then show me what you’ve got!</div></div>
+  <div class="card">
+    <label for="name">Your full name</label><input id="name" autocomplete="name" placeholder="e.g. Aziza Karimova">
+    <label for="group">Group</label><input id="group" placeholder="e.g. 201">
+    <div class="cities" id="cityList"></div>
+  </div>
+  <button class="btn" id="go" disabled>Start the journey</button>
+</main>
+
+<div id="game" class="hidden">
+  <div class="top"><div class="wrap">
+    <div class="stats"><span class="pts" id="pts">0 pts</span><span class="cnt" id="cnt"></span><span class="streak" id="streak">🔥 0</span></div>
+    <div class="route" id="route"><div class="line"></div><div class="fill" id="fill"></div><svg class="rider" id="rider"><use href="#camel"/></svg></div>
+    <div class="citynames" id="cityNames"></div>
+  </div></div>
+  <main class="wrap" id="stage"></main>
+</div>
+
+<main id="end" class="wrap hidden">
+  <div class="passport" id="passport"></div>
+  <div class="row2"><button class="btn ghost" id="again">Play again</button><button class="btn blue" id="showrev">My answers</button></div>
+  <div class="card review hidden" id="review"></div>
+</main>
+
+<script>
+const DATA = {"lesson": 3, "unit": 2, "module": 1, "title": "Seasons Street", "genre": "Types of Paragraphs", "theme": "Landscapes and Seasons of Uzbekistan", "level": "C1", "stamp": "Namangan", "heroTag": "Which season is yours?", "hero": "img/L03_hero.jpg", "note": "Conventions: 'mcq' options[0] is correct (shuffled in the browser); 'order' items are listed in the correct order (shuffled in the browser); 'pick' and 'tfng' use an explicit answer; 'write' is scored by its checklist. 'chain' steps are in the correct order (Essay Domino); 'gaps' and 'type' mark answers with [[…]] in the text, alternatives separated by |. Transfer rule: the quiz never repeats the book's texts or exercises - same words, grammar and genre, new texts and tasks (the Essay Domino rebuilds a new C1 comparison paragraph on a new task).", "sections": [{"id": "words", "title": "Word Bazaar", "shuffle": true, "questions": [{"type": "mcq", "q": "My grandfather grows apples and pears in the ______ behind his house.", "options": ["orchard", "harvest", "drought", "frost"], "explain": "An orchard = a garden of fruit trees."}, {"type": "mcq", "q": "There was ______ on the car windows this morning, so we had to scrape off the ice.", "options": ["frost", "drought", "blossom", "harvest"], "explain": "Frost = thin white ice on cold mornings."}, {"type": "mcq", "q": "The ______ of the Kyzylkum is flat, dry and almost empty.", "options": ["landscape", "orchard", "blossom", "harvest"], "explain": "Landscape = everything you can see in an area of land."}, {"type": "mcq", "q": "Ice cream ______ very quickly if you leave it in the sun.", "options": ["melts", "grows", "blooms", "freezes"], "explain": "To melt = to turn from ice (or something frozen) into liquid."}, {"type": "mcq", "q": "We woke up on a ______ October morning and could see our breath in the air.", "options": ["crisp", "scorching", "fertile", "humid"], "explain": "Crisp air is cold, dry and fresh."}, {"type": "mcq", "q": "After two years of ______, the river was almost dry.", "options": ["drought", "blossom", "harvest", "frost"], "explain": "A drought = a long time without rain."}]}, {"id": "read", "title": "Read like a detective", "shuffle": false, "passageTitle": "One Village, Four Seasons", "passage": ["A  In April, my grandmother’s village in the foothills is green and fragrant. Wild tulips appear between the grey rocks, and the cold, clear stream sings loudly with melted snow. In the morning, the air smells of wet earth and smoke from the bread oven.", "B  Last July, I helped my uncle with the apricot harvest. First, we climbed the trees before sunrise, while it was still cool. Then we filled big baskets and carried them up a ladder. After that, we spread the fruit on the flat roof to dry in the sun. By the end of the week, the whole roof was orange.", "C  Life in the village and life in the city follow the seasons in different ways. In the city, people mostly notice the weather through their windows, whereas in the village the seasons decide everyone’s work. Similarly, both places welcome spring with Navruz, but in the village the whole street cooks and eats together.", "D  However, the village has one serious problem in winter: the road to town is often blocked by snow. As a result, children sometimes cannot get to school. One solution is to keep a small snow plough in the village. Another solution is to run online lessons, so pupils can study at home on snowy days.", "E  In my opinion, every city student should spend at least one season in a village. I believe it teaches you where your food comes from and how much work it needs. Moreover, after a week without traffic, you start to notice the sky again."], "questions": [{"type": "mcq", "q": "Paragraph B is a ______ paragraph.", "options": ["narrative", "descriptive", "comparison–contrast", "problem–solution"], "explain": "B tells events in time order: First … Then … After that … By the end of the week."}, {"type": "mcq", "q": "What type of paragraph is D, and what is the clue?", "options": ["Problem–solution: it names a problem and two fixes.", "Narrative: it tells events in time order.", "Descriptive: it describes snow with the senses.", "Comparison–contrast: it compares winter and summer roads."], "explain": "One serious problem … One solution … Another solution …"}, {"type": "mcq", "q": "Which paragraph appeals most to the five senses?", "options": ["A", "B", "D", "E"], "explain": "A: green, fragrant, the stream sings, the air smells of wet earth."}, {"type": "tfng", "q": "Wild tulips grow between the rocks near the village in April.", "answer": "T", "explain": "A: wild tulips appear between the grey rocks."}, {"type": "tfng", "q": "The writer picked apricots in the afternoon heat.", "answer": "F", "explain": "B: they climbed the trees before sunrise, while it was still cool."}, {"type": "tfng", "q": "The writer’s uncle sells the dried apricots at the bazaar.", "answer": "NG", "explain": "B does not say what happens to the dried fruit."}, {"type": "tfng", "q": "In the village, the seasons decide people’s work.", "answer": "T", "explain": "C: in the village the seasons decide everyone’s work."}, {"type": "tfng", "q": "The road to town is sometimes blocked in summer.", "answer": "F", "explain": "D: it is blocked by snow in winter."}, {"type": "pick", "q": "Paragraph B. Tap the sentence with the FIRST step of the story.", "text": ["Last July, I helped my uncle with the apricot harvest.", "First, we climbed the trees before sunrise, while it was still cool.", "Then we filled big baskets and carried them up a ladder.", "After that, we spread the fruit on the flat roof to dry in the sun.", "By the end of the week, the whole roof was orange."], "answer": 1, "explain": "The first sentence is the door; 'First, …' opens the time order."}, {"type": "pick", "q": "Paragraph C. Tap the sentence that shows a DIFFERENCE.", "text": ["Life in the village and life in the city follow the seasons in different ways.", "In the city, people mostly notice the weather through their windows, whereas in the village the seasons decide everyone’s work.", "Similarly, both places welcome spring with Navruz, but in the village the whole street cooks and eats together."], "answer": 1, "explain": "'Whereas' joins two different things: the city and the village."}]}, {"id": "tools", "title": "Language toolkit", "shuffle": true, "questions": [{"type": "mcq", "q": "Choose the correct phrase.", "options": ["a small round wooden table", "a wooden small round table", "a round small wooden table", "a small wooden round table"], "explain": "Size → shape → material: small → round → wooden."}, {"type": "mcq", "q": "Choose the correct phrase.", "options": ["tall green poplar trees", "green tall poplar trees", "poplar tall green trees", "tall poplar green trees"], "explain": "Size before colour; the noun that names the kind of tree (poplar) stands next to 'trees'."}, {"type": "mcq", "q": "Which phrase is punctuated correctly?", "options": ["a cold, windy evening", "a cold windy, evening", "a, cold windy evening", "a cold windy evening,"], "explain": "Two adjectives of the same kind are separated by a comma."}, {"type": "mcq", "q": "The village is quiet at night, ______ the city never sleeps.", "options": ["whereas", "unlike", "by contrast", "in contrast to"], "explain": "whereas joins two contrasting clauses in one sentence. Unlike and in contrast to need a noun after them."}, {"type": "mcq", "q": "Choose the best nominalised version: “Farmers do not have enough water, so their harvests are smaller.”", "options": ["A shortage of water leads to smaller harvests.", "A short of water is leading smaller harvests.", "Water shortage it leads to the small harvest.", "The shortly water results to smaller harvests."], "explain": "not enough water → a shortage of water (noun phrase) + leads to = cause and effect in one academic sentence."}, {"type": "mcq", "q": "Which sentence uses a stance adverb to give a careful opinion?", "options": ["Spring is arguably the best season for a hike.", "Spring is the best season for a hike, 100%.", "In my opinion I think spring is the best season.", "Spring is best season for hike, everybody knows."], "explain": "arguably = the writer’s view, stated with care."}, {"type": "mcq", "q": "Choose the most precise descriptive phrase.", "options": ["the snow-capped peaks of the Pamir", "the very very high white big mountains", "the mountains which are nice and high", "some mountains that have snow and all"], "explain": "A compound adjective (snow-capped) + of + a detail paints a precise picture without a pile of adjectives."}]}, {"id": "blueprint", "title": "The Blueprint", "shuffle": false, "questions": [{"type": "order", "q": "Rebuild the street! Put the job of each paragraph into the right house.", "items": ["paints a picture with the senses", "tells events in time order", "argues one view with reasons", "shows how two things are alike or different", "explains a problem and ways to fix it"], "labels": ["House 1 · Descriptive", "House 2 · Narrative", "House 3 · Opinion", "House 4 · Comparison", "House 5 · Problem–solution"], "explain": "Five houses, one street: every paragraph type has its own job. All of them still have a door, shelves and a window."}, {"type": "mcq", "q": "Which signal words belong to the narrative house?", "options": ["At first … Then …", "whereas … similarly …", "I believe … Moreover …", "One solution is …"], "explain": "Narrative paragraphs use time words."}, {"type": "mcq", "q": "A paragraph that explains a difficulty and ways to fix it is ______.", "options": ["problem–solution", "comparison–contrast", "descriptive", "narrative"], "explain": "Problem–solution: One serious problem is … One solution is …"}, {"type": "mcq", "q": "Which topic sentence opens a descriptive paragraph?", "options": ["At dawn, the desert is pink, silent and cold.", "Last spring, I travelled across the desert by train.", "I believe that deserts are more beautiful than forests.", "One serious problem in the desert is the lack of water."], "explain": "A descriptive door paints a picture: colour, sound, temperature."}]}, {"id": "domino", "title": "Essay Domino", "shuffle": false, "questions": [{"type": "chain", "para": "The door", "tone": "intro", "q": "Build THE DOOR of a C1 comparison paragraph: “Compare a traditional bazaar and a modern supermarket.” Tap the tile that comes next.", "steps": [{"label": "Topic sentence", "hint": "two things + a precise controlling idea", "t": "Although a traditional bazaar and a modern supermarket both feed the city, they offer strikingly different experiences."}, {"label": "Focus", "hint": "say what the paragraph will compare", "t": "The contrast is clearest in their atmosphere and in the way prices are set."}], "traps": [{"t": "In this paragraph I will compare bazaars and supermarkets.", "why": "Announcing the topic is not a topic sentence: there is no controlling idea."}, {"t": "Bazaar and supermarket are very different, they are not same.", "why": "Missing articles, a comma splice and a vague idea."}], "explain": "Door formula: Topic sentence → Focus."}, {"type": "chain", "para": "Shelf 1 · Similarity", "tone": "body", "q": "Fill SHELF 1. Tap the tile that comes next.", "steps": [{"label": "Point", "hint": "what they have in common", "t": "Admittedly, the two places have much in common."}, {"label": "Detail", "hint": "evidence for the similarity", "t": "Both sell fresh produce every day, and both are part of the weekly routine of most families."}], "traps": [{"t": "Bazaars are also good places to take beautiful photos.", "why": "A brick from another wall: it does not show a similarity."}, {"t": "Both of them they sell fruits and vegetables and also other things.", "why": "“Both of them they” repeats the subject; “other things” is vague."}], "explain": "Shelf formula: Point → Detail."}, {"type": "chain", "para": "Shelf 2 · Difference", "tone": "body", "q": "Fill SHELF 2. Tap the tile that comes next.", "steps": [{"label": "Point", "hint": "the first difference", "t": "Their atmosphere, however, could hardly be more different."}, {"label": "Detail", "hint": "contrast the two in one sentence", "t": "A bazaar is noisy and colourful, with sellers calling out to passers-by, whereas a supermarket is quiet and orderly."}], "traps": [{"t": "The bazaar is more noisier than the supermarket.", "why": "Double comparative: say “noisier”, not “more noisier”."}, {"t": "Honestly, supermarkets are sooo boring compared to bazaars!!", "why": "Spoken style and emotion, not a precise contrast."}], "explain": "Shelf formula: Point → Detail."}, {"type": "chain", "para": "Shelf 3 · Difference", "tone": "body", "q": "Fill SHELF 3. Tap the tile that comes next.", "steps": [{"label": "Point", "hint": "a sharper difference", "t": "An even sharper contrast lies in the way prices are set."}, {"label": "Detail", "hint": "contrast with unlike", "t": "Unlike supermarket prices, which are printed on labels, bazaar prices are often the result of friendly bargaining."}], "traps": [{"t": "For example, last week my uncle bought a melon at the bazaar.", "why": "A personal story is weak evidence for a general contrast."}, {"t": "Unlike in supermarket, in bazaar prices can change.", "why": "Missing articles, and unlike needs a noun phrase: “Unlike supermarket prices, …”."}], "explain": "Shelf formula: Point → Detail."}, {"type": "chain", "para": "The window", "tone": "concl", "q": "Open THE WINDOW. Tap the tile that comes next.", "steps": [{"label": "Concluding sentence", "hint": "the main idea in new words", "t": "In short, the supermarket offers speed and order, while the bazaar offers conversation and character."}, {"label": "Final thought", "hint": "a wider point", "t": "Perhaps that is why many families still choose the bazaar for the food that matters most."}], "traps": [{"t": "In conclusion, online shopping is also becoming very popular.", "why": "Never add a new idea in the concluding sentence."}, {"t": "To sum up, bazaars are bazaars and supermarkets are supermarkets.", "why": "This says nothing: restate the contrast in new words."}], "explain": "Window formula: Concluding sentence → Final thought."}, {"type": "gaps", "q": "Fill the mortar. Tap a tile, then a gap. Three tiles are extra.", "text": "[[Although]] a bazaar and a supermarket both feed the city, they offer different experiences. [[Admittedly]], the two have much in common: [[both]] sell fresh produce. Their atmosphere, [[however]], could hardly be more different. A bazaar is noisy, [[whereas]] a supermarket is quiet. [[Unlike]] supermarket prices, bazaar prices are often bargained.", "extra": ["Despite of", "Such as", "On the contrary to"], "explain": "These C1 links show similarity and contrast: they are the mortar of a comparison paragraph."}, {"type": "type", "q": "Write it from memory. The first letters will help you.", "text": "A bazaar is noisy and colourful, [[whereas]] a supermarket is quiet and orderly.", "explain": "whereas = a C1 way to contrast two clauses in one sentence."}, {"type": "type", "q": "Write it from memory. The first letters will help you.", "text": "[[Unlike]] supermarket prices, bazaar prices are often the result of [[bargaining]].", "explain": "Unlike + noun phrase, … = precise contrast."}, {"type": "type", "q": "Write it from memory. The first letters will help you.", "text": "The two places offer [[strikingly]] different experiences.", "explain": "strikingly different = very clearly different (C1 collocation)."}, {"type": "type", "q": "Write it from memory. The first letters will help you.", "text": "After the [[scorching]] heat of summer, the [[crisp]] mornings of October feel wonderful.", "explain": "scorching = extremely hot; crisp air = cold, dry and fresh."}]}, {"id": "write", "title": "Write it", "shuffle": false, "questions": [{"type": "mcq", "q": "Hot take: “leaves r SO orange rn 🍂🍂 obsessed”. Choose the best academic take.", "options": ["In late autumn, the leaves in the parks turn bright orange.", "The leaves are SO orange right now and I am obsessed.", "In my opinion I think the leaves are very very orange.", "Autumn leaves are literally the best thing ever!!!"], "explain": "Academic style: exact (in late autumn, in the parks), calm, no slang or emoji."}, {"type": "mcq", "q": "Which sentence is correct?", "options": ["In winter, it is often foggy in the valley.", "In winter is often foggy in the valley.", "In winter often foggy is in the valley.", "In the winter is often very foggy in the valley."], "explain": "English needs a subject: In winter, it is often foggy."}, {"type": "write", "q": "Your turn! Write ONE sentence that could open a COMPARISON paragraph about two places in Uzbekistan (for example, a city and a village, or the mountains and the desert).", "minWords": 10, "maxWords": 40, "checks": [{"label": "Uses a comparison signal word (both, whereas, unlike …)", "any": ["whereas", "while", "both", "similar", "unlike", "in contrast", "on the other hand", "however", "differ", "alike", "but", "than"]}, {"label": "Uses a Word Bazaar word", "any": ["landscape", "foothill", "orchard", "blossom", "scorching", "crisp", "harvest", "fertile", "frost", "melt", "drought", "breathtaking"]}, {"label": "Does not announce the topic (no 'In this paragraph…')", "none": ["in this paragraph", "i will write", "i am going to", "this paragraph is about", "i will compare"]}, {"label": "No contractions (don't, it's …)", "none": ["n't", "n’t", "it's", "it’s", "that's", "that’s", "i'm", "i’m", "they're", "they’re", "we're", "we’re", "you're", "you’re", "there's", "there’s", "what's", "what’s"]}], "explain": "Your sentence appears in your passport so your teacher can read it.", "label": "My comparison door"}, {"type": "write", "label": "My descriptive shelf", "q": "Your turn! Write one DESCRIPTIVE shelf (2–3 sentences) about a place in Uzbekistan in winter. Help the reader see, hear or feel it.", "minWords": 20, "maxWords": 60, "checks": [{"label": "Uses at least one sense (see, hear, smell, feel …)", "any": ["see", "hear", "smell", "feel", "taste", "sound", "scent", "glitter", "shine", "crunch", "whisper", "cold on", "icy"]}, {"label": "Uses a Word Bazaar or Level-up word", "any": ["landscape", "foothills", "orchard", "blossom", "scorching", "crisp", "harvest", "fertile", "frost", "melt", "drought", "breathtaking", "arid", "lush", "scarcity", "picturesque"]}, {"label": "Uses a precise noun phrase (snow-capped, … of …)", "any": ["-capped", "-covered", "-lined", "-baked", " of the "]}, {"label": "No contractions (don't, it's …)", "none": ["n't", "n’t", "it's", "it’s", "that's", "that’s", "i'm", "i’m", "they're", "they’re", "there's", "there’s"]}], "explain": "Your shelf appears in your passport so your teacher can read it."}]}], "avatar": "img/ProfPen_avatar.png"};
+const CITIES = ["Samarkand", "Bukhara", "Khiva", "Shahrisabz", "Termez", "Kokand", "Margilan"];
+const COLORS = ["var(--turq)", "var(--saffron)", "var(--pome)", "var(--lapis)", "var(--turq)", "var(--saffron)"];
+const KIND = { mcq: "Choose the answer", tfng: "True, False or Not Given?", pick: "Find it in the text", order: "Put in order", write: "Write", chain: "Essay domino", gaps: "Fill the mortar", type: "Write it from memory" };
+const TFNG = [["T", "True"], ["F", "False"], ["NG", "Not Given"]];
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+function rnd(n) { try { const a = new Uint32Array(1); crypto.getRandomValues(a); return a[0] % n; } catch (e) { return Math.floor(Math.random() * n); } }
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rnd(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
+const AV = () => DATA.avatar ? '<div class="avatar pic"><img src="' + esc(DATA.avatar) + '" alt="Prof. Pen"></div>' : '<div class="avatar">PROF<br>PEN</div>';
+const words = t => (t.trim().match(/[A-Za-z’'-]+/g) || []).length;
+
+// ---------- opener ----------
+(function opener() {
+  let m = ""; for (let i = 1; i <= 45; i++) m += "<i class='" + (i < DATA.lesson ? "d" : i === DATA.lesson ? "n" : "") + "'></i>";
+  $("routeMini").innerHTML = m + "<span>STOP " + DATA.lesson + " OF 45</span>";
+  $("hero").innerHTML = (DATA.hero ? '<img src="' + esc(DATA.hero) + '" alt="">' : '<svg viewBox="0 0 640 300"><use href="#scene"/></svg>') +
+    (DATA.heroTag ? '<div class="tag">' + esc(DATA.heroTag) + "</div>" : "");
+  if (DATA.avatar) document.querySelectorAll(".pen .avatar").forEach(a => a.outerHTML = AV());
+  $("cityList").innerHTML = DATA.sections.map((s, i) => "<div><b>" + CITIES[i] + "</b>" + esc(s.title) + "</div>").join("");
+})();
+const ready = () => { $("go").disabled = !($("name").value.trim().length > 2 && $("group").value.trim()); };
+$("name").oninput = ready; $("group").oninput = ready;
+$("go").onclick = () => { build(); show("game"); drawRoute(); ask(); };
+function show(id) { ["start", "game", "end"].forEach(x => $(x).classList.toggle("hidden", x !== id)); scrollTo(0, 0); }
+
+// ---------- state ----------
+let S;
+function build() {
+  const qs = [];
+  DATA.sections.forEach((s, si) => {
+    let list = s.questions.map(q => {
+      if (q.type === "mcq") return { ...q, sec: si, opts: shuffle(q.options.map((t, j) => ({ k: "o" + j, t }))), correct: "o0" };
+      if (q.type === "tfng") return { ...q, sec: si, opts: TFNG.map(([k, t]) => ({ k, t })), correct: q.answer };
+      if (q.type === "order") { let o = shuffle(q.items.map((t, j) => ({ k: j, t }))); while (o.length > 1 && o.every((x, j) => x.k === j)) o = shuffle(o); return { ...q, sec: si, tiles: o }; }
+      if (q.type === "gaps") { const ans = [...q.text.matchAll(/\[\[(.+?)\]\]/g)].map(m => m[1]); return { ...q, sec: si, ans, tiles: shuffle(ans.concat(q.extra || []).map((t, j) => ({ k: j, t }))) }; }
+      return { ...q, sec: si };
+    });
+    if (s.shuffle) list = shuffle(list);
+    qs.push(...list);
+  });
+  S = { qs, i: 0, pts: 0, streak: 0, best: 0, right: 0, auto: qs.filter(q => q.type !== "write").length, res: [], writing: [], started: Date.now(), built: [] };
+}
+
+// ---------- route ----------
+function drawRoute() {
+  const n = DATA.sections.length;
+  $("route").querySelectorAll(".city").forEach(e => e.remove());
+  for (let k = 0; k < n; k++) {
+    const d = document.createElement("div"); d.className = "city"; d.id = "c" + k;
+    d.style.left = "calc(12px + (100% - 24px) * " + (k / (n - 1)) + ")"; $("route").appendChild(d);
+  }
+  $("cityNames").innerHTML = DATA.sections.map((s, i) => "<span>" + CITIES[i] + "</span>").join("");
+}
+function updateTop(walk) {
+  const total = S.qs.length, f = Math.min(S.i / (total - 1 || 1), 1);
+  $("fill").style.width = "calc((100% - 24px) * " + f + ")";
+  $("rider").style.left = "calc(12px + (100% - 24px) * " + f + ")";
+  if (walk) { $("rider").classList.remove("walk"); void $("rider").offsetWidth; $("rider").classList.add("walk"); }
+  const sec = S.qs[S.i].sec;
+  for (let k = 0; k < DATA.sections.length; k++) $("c" + k).classList.toggle("done", k <= sec);
+  $("pts").textContent = S.pts + " pts";
+  $("cnt").textContent = (S.i + 1) + " / " + total;
+  $("streak").textContent = "🔥 " + S.streak;
+}
+
+// ---------- questions ----------
+function ask(walk) {
+  updateTop(walk);
+  const q = S.qs[S.i], s = DATA.sections[q.sec];
+  const first = S.qs.findIndex(x => x.sec === q.sec) === S.i;
+  let h = '<div class="move"><div class="num">' + (q.sec + 1) + '</div><h2>' + esc(s.title) + "</h2><small>" + CITIES[q.sec] + "</small></div>";
+  if (s.passage) h += '<details class="article"' + (first ? " open" : "") + "><summary>📜 " + esc(s.passageTitle) + "</summary>" +
+    s.passage.map(p => { const m = p.match(/^([A-G])\s+(.*)$/); return "<p>" + (m ? '<span class="L">' + m[1] + "</span>" + esc(m[2]) : esc(p)) + "</p>"; }).join("") + "</details>";
+  h += '<div class="q" style="--c:' + COLORS[q.sec] + '"><div class="kind">' + KIND[q.type] + '</div><div class="stem">' + esc(q.q) + "</div>";
+  if (q.type === "mcq" || q.type === "tfng") {
+    h += '<div class="opts' + (q.type === "tfng" ? " tf" : "") + '">' + q.opts.map((o, j) =>
+      '<button class="opt" data-k="' + o.k + '">' + (q.type === "tfng" ? "" : '<span class="k">' + "ABCD"[j] + "</span>") + "<span>" + esc(o.t) + "</span></button>").join("") + "</div>";
+  } else if (q.type === "pick") {
+    h += q.text.map((t, j) => '<button class="sent" data-j="' + j + '">' + esc(t) + "</button>").join("");
+  } else if (q.type === "order") {
+    h += '<div class="slots">' + q.labels.map((l, j) => '<div class="slot"><div class="lab">' + esc(l) + '</div><div class="fill" data-slot="' + j + '"></div></div>').join("") + "</div>";
+    h += '<div class="tiles" id="tiles"></div><button class="btn blue hidden" id="chk">Check my order</button>';
+  } else if (q.type === "chain") {
+    h += '<div class="essay" id="essay"></div><div class="tilebox" id="tiles"></div><div id="why"></div>';
+  } else if (q.type === "gaps") {
+    let n = 0; h += '<div class="gtext">' + q.text.split(/\[\[.+?\]\]/).map((part, j, a) => esc(part) + (j < a.length - 1 ? '<button class="gap" data-g="' + (n++) + '"></button>' : "")).join("") + '</div><div class="bank" id="bank"></div><button class="btn blue hidden" id="chk">Check the mortar</button>';
+  } else if (q.type === "type") {
+    let n = 0; h += '<div class="ttext">' + q.text.split(/\[\[.+?\]\]/).map((part, j, a) => {
+      if (j === a.length - 1) return esc(part);
+      const ans = q.text.match(/\[\[(.+?)\]\]/g)[j].slice(2, -2).split("|")[0];
+      const hint = ans.split(" ").map(w => w[0] + "…").join(" ");
+      return esc(part) + '<input class="tin" data-t="' + (n++) + '" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="' + esc(hint) + '" style="width:' + Math.max(70, ans.length * 11 + 24) + 'px">';
+    }).join("") + '</div><button class="btn blue" id="chk" style="margin-top:12px">Check my words</button>';
+  } else if (q.type === "write") {
+    h += '<textarea id="ta" placeholder="Start typing here…"></textarea><div class="wc" id="wc">0 words</div>' +
+      '<ul class="checks" id="cl">' + q.checks.map(c => "<li>" + esc(c.label) + "</li>").join("") + '<li id="len">' + q.minWords + "–" + q.maxWords + " words</li></ul>" +
+      '<button class="btn blue" id="sub" disabled>Submit</button>';
+  }
+  h += '<div id="fb"></div></div>';
+  $("stage").innerHTML = h;
+  if (q.type === "mcq" || q.type === "tfng") $("stage").querySelectorAll(".opt").forEach(b => b.onclick = () => grade(b.dataset.k === q.correct, () => {
+    $("stage").querySelectorAll(".opt").forEach(x => { x.disabled = true; if (x.dataset.k === q.correct) x.classList.add("right"); else if (x === b) x.classList.add("wrong"); });
+  }, (q.opts.find(o => o.k === b.dataset.k) || {}).t, (q.opts.find(o => o.k === q.correct) || {}).t));
+  if (q.type === "pick") $("stage").querySelectorAll(".sent").forEach(b => b.onclick = () => grade(+b.dataset.j === q.answer, () => {
+    $("stage").querySelectorAll(".sent").forEach(x => { x.disabled = true; if (+x.dataset.j === q.answer) x.classList.add("right"); else if (x === b) x.classList.add("wrong"); });
+  }, b.textContent, q.text[q.answer]));
+  if (q.type === "order") orderUI(q);
+  if (q.type === "chain") chainUI(q);
+  if (q.type === "gaps") gapsUI(q);
+  if (q.type === "type") typeUI(q);
+  if (q.type === "write") writeUI(q);
+}
+function orderUI(q) {
+  const placed = Array(q.items.length).fill(null);
+  const draw = () => {
+    $("stage").querySelectorAll(".fill").forEach((f, j) => { f.textContent = placed[j] ? placed[j].t : ""; f.classList.toggle("on", !!placed[j]); });
+    $("tiles").innerHTML = q.tiles.filter(t => !placed.includes(t)).map(t => '<button class="sent" data-k="' + t.k + '">' + esc(t.t) + "</button>").join("");
+    $("tiles").querySelectorAll(".sent").forEach(b => b.onclick = () => { const t = q.tiles.find(x => x.k === +b.dataset.k); placed[placed.indexOf(null)] = t; draw(); });
+    $("chk").classList.toggle("hidden", placed.includes(null));
+  };
+  $("stage").querySelectorAll(".fill").forEach((f, j) => f.onclick = () => { if (!f.dataset.done && placed[j]) { placed[j] = null; draw(); } });
+  $("chk").onclick = () => {
+    const ok = placed.every((t, j) => t.k === j);
+    grade(ok, () => {
+      $("chk").remove();
+      $("stage").querySelectorAll(".fill").forEach((f, j) => { f.dataset.done = 1; f.classList.add(placed[j].k === j ? "right" : "wrong"); });
+    }, placed.map(t => t.t.split(" ").slice(0, 3).join(" ") + "…").join(" → "), q.items.map(t => t.split(" ").slice(0, 3).join(" ") + "…").join(" → "));
+  };
+  draw();
+}
+function writeUI(q) {
+  const ta = $("ta"), lis = $("cl").querySelectorAll("li");
+  const test = t => {
+    const low = " " + t.toLowerCase().replace(/\s+/g, " ") + " ";
+    return q.checks.map(c => (c.any ? c.any.some(w => low.includes(w)) : !c.none.some(w => low.includes(w))) && t.trim().length > 0);
+  };
+  ta.oninput = () => {
+    const n = words(ta.value), r = test(ta.value);
+    r.forEach((v, j) => lis[j].classList.toggle("on", v));
+    const okLen = n >= q.minWords && n <= q.maxWords;
+    $("len").classList.toggle("on", okLen);
+    $("wc").textContent = n + " words";
+    $("sub").disabled = n < q.minWords;
+  };
+  $("sub").onclick = () => {
+    const r = test(ta.value), n = words(ta.value), okLen = n >= q.minWords && n <= q.maxWords;
+    const got = r.filter(Boolean).length + (okLen ? 1 : 0), max = r.length + 1;
+    S.pts += got * 5; S.writing.push({ q: q.q, label: q.label || "My writing", text: ta.value.trim(), got, max });
+    ta.readOnly = true; $("sub").remove();
+    feedback(got === max, (got === max ? "Brilliant — every box is ticked! " : got + " of " + max + " boxes ticked. ") + "+" + got * 5 + " pts. " + (q.explain || ""));
+    updateTop();
+  };
+}
+
+// ---------- Essay Domino: rebuild the model essay sentence by sentence ----------
+function chainPool(q) {
+  const later = []; let after = false;
+  S.qs.forEach(x => { if (x === q) after = true; if (after && x.type === "chain") x.steps.forEach(st => later.push({ t: st.t, why: "Not yet — this is the " + st.label + " of " + x.para + "." })); });
+  return later;
+}
+function chainUI(q) {
+  let step = 0, mistakes = 0;
+  const pool = chainPool(q);
+  const drawEssay = () => {
+    const done = S.built.map(p => '<div class="para ' + p.tone + '"><span class="pl">' + esc(p.para) + "</span>" + p.items.map(it => '<span class="fn">' + esc(it.label) + "</span>" + esc(it.t) + " ").join("") + "</div>").join("");
+    const cur = q.steps.slice(0, step).map(st => '<span class="fn">' + esc(st.label) + "</span>" + esc(st.t) + " ").join("");
+    const nxt = step < q.steps.length ? '<span class="slotnext">Next tile: <b>' + (step + 1) + ". " + esc(q.steps[step].label) + "</b> — " + esc(q.steps[step].hint) + "</span>" : "";
+    $("essay").innerHTML = done + '<div class="para ' + q.tone + ' now"><span class="pl">' + esc(q.para) + "</span>" + cur + nxt + "</div>";
+  };
+  const drawTiles = () => {
+    if (step >= q.steps.length) { $("tiles").innerHTML = ""; return; }
+    const right = { t: q.steps[step].t, ok: true };
+    const others = shuffle(pool.filter(p => p.t !== right.t && !q.steps.slice(0, step).some(st => st.t === p.t)).concat(q.traps || [])).slice(0, 2);
+    const opts = shuffle([right].concat(others));
+    $("tiles").innerHTML = opts.map((o, j) => '<button class="sent" data-j="' + j + '">' + esc(o.t) + "</button>").join("");
+    $("tiles").querySelectorAll(".sent").forEach(b => b.onclick = () => {
+      const o = opts[+b.dataset.j];
+      if (o.ok) {
+        step++; $("why").innerHTML = ""; drawEssay();
+        if (step < q.steps.length) drawTiles(); else finishChain();
+      } else {
+        mistakes++; b.classList.remove("wrong"); void b.offsetWidth; b.classList.add("wrong"); b.disabled = true;
+        $("why").innerHTML = '<p class="why">' + esc(o.why) + "</p>";
+      }
+    });
+  };
+  const finishChain = () => {
+    S.built.push({ para: q.para, tone: q.tone, items: q.steps.map(st => ({ label: st.label, t: st.t })) });
+    $("tiles").innerHTML = "";
+    grade(mistakes === 0, () => {}, mistakes === 0 ? "no wrong tiles" : mistakes + " wrong tile" + (mistakes > 1 ? "s" : ""), q.steps.map(st => st.label).join(" → "));
+  };
+  drawEssay(); drawTiles();
+}
+function gapsUI(q) {
+  const gaps = [...$("stage").querySelectorAll(".gap")], placed = Array(gaps.length).fill(null);
+  let sel = null;
+  const draw = () => {
+    gaps.forEach((g, j) => { g.textContent = placed[j] ? placed[j].t : ""; g.classList.toggle("on", !!placed[j]); g.classList.toggle("sel", sel === j); });
+    $("bank").innerHTML = q.tiles.filter(t => !placed.includes(t)).map(t => '<button data-k="' + t.k + '">' + esc(t.t) + "</button>").join("");
+    $("bank").querySelectorAll("button").forEach(b => b.onclick = () => {
+      const t = q.tiles.find(x => x.k === +b.dataset.k);
+      const j = sel !== null && !placed[sel] ? sel : placed.indexOf(null);
+      if (j < 0) return; placed[j] = t; sel = null; draw();
+    });
+    $("chk").classList.toggle("hidden", placed.includes(null));
+  };
+  gaps.forEach((g, j) => g.onclick = () => { if (g.dataset.done) return; if (placed[j]) { placed[j] = null; sel = j; } else sel = sel === j ? null : j; draw(); });
+  $("chk").onclick = () => {
+    const ok = placed.every((t, j) => t.t === q.ans[j]);
+    grade(ok, () => {
+      $("chk").remove(); $("bank").remove();
+      gaps.forEach((g, j) => { g.dataset.done = 1; const r = placed[j].t === q.ans[j]; g.classList.add(r ? "right" : "wrong"); if (!r) g.insertAdjacentHTML("afterend", '<span class="fix">→ ' + esc(q.ans[j]) + "</span>"); });
+    }, placed.map(t => t.t).join(" · "), q.ans.join(" · "));
+  };
+  draw();
+}
+const norm = t => t.toLowerCase().replace(/[’`]/g, "'").replace(/[.,;:!?]+$/g, "").replace(/\s+/g, " ").trim();
+function typeUI(q) {
+  const ans = [...q.text.matchAll(/\[\[(.+?)\]\]/g)].map(m => m[1].split("|"));
+  const ins = [...$("stage").querySelectorAll(".tin")];
+  ins.forEach((inp, j) => inp.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); (ins[j + 1] || $("chk")).focus(); } }));
+  $("chk").onclick = () => {
+    if (ins.some(inp => !inp.value.trim())) { const e = ins.find(inp => !inp.value.trim()); e.focus(); return; }
+    const res = ins.map((inp, j) => ans[j].some(a => norm(a) === norm(inp.value)));
+    grade(res.every(Boolean), () => {
+      $("chk").remove();
+      ins.forEach((inp, j) => { inp.readOnly = true; inp.classList.add(res[j] ? "right" : "wrong"); if (!res[j]) inp.insertAdjacentHTML("afterend", '<span class="fix">→ ' + esc(ans[j][0]) + "</span>"); });
+    }, ins.map(inp => inp.value.trim()).join(" · "), ans.map(a => a[0]).join(" · "));
+  };
+  setTimeout(() => ins[0] && ins[0].focus({ preventScroll: true }), 50);
+}
+function grade(ok, mark, given, correct) {
+  const q = S.qs[S.i];
+  mark();
+  S.res.push({ q: q.q, sec: q.sec, ok, given, correct });
+  if (ok) {
+    S.right++; S.streak++; S.best = Math.max(S.best, S.streak); S.pts += 10;
+    if (S.streak >= 3) { S.pts += 5; toast("🔥 Streak x" + S.streak + "  +5"); $("streak").classList.add("hot"); setTimeout(() => $("streak").classList.remove("hot"), 300); }
+  } else S.streak = 0;
+  updateTop();
+  feedback(ok, (ok ? "Spot on! " : "Not quite. ") + (q.explain || ""));
+}
+function feedback(ok, text) {
+  const last = S.i === S.qs.length - 1;
+  $("fb").innerHTML = '<div class="fb ' + (ok ? "ok" : "no") + '">' + AV() + '<div class="hand">' + esc(text) + "</div></div>" +
+    '<button class="btn next" id="nx">' + (last ? "Reach " + esc(DATA.stamp) + " 🏁" : "Next →") + "</button>";
+  $("nx").onclick = () => { if (last) finish(); else { S.i++; ask(true); scrollTo(0, 0); } };
+  $("nx").scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+function toast(t) { const d = document.createElement("div"); d.className = "toast"; d.textContent = t; document.body.appendChild(d); setTimeout(() => d.remove(), 1500); }
+
+// ---------- passport ----------
+function stampSVG(pct) {
+  const col = pct >= 86 ? "#1d3b8b" : pct >= 71 ? "#0e8a86" : pct >= 56 ? "#b86f00" : "#b8324a";
+  const ring = "STOP " + String(DATA.lesson).padStart(2, "0") + " · " + DATA.genre.toUpperCase() + " · SILK ROAD WRITERS · ";
+  return '<svg class="stamp" viewBox="0 0 200 200"><defs><path id="ring" d="M100 100 m-74 0 a74 74 0 1 1 148 0 a74 74 0 1 1 -148 0"/></defs>' +
+    '<g fill="none" stroke="' + col + '"><circle cx="100" cy="100" r="94" stroke-width="5"/><circle cx="100" cy="100" r="60" stroke-width="2.5"/></g>' +
+    '<text font-family="Nunito" font-weight="900" font-size="12" letter-spacing="1.4" fill="' + col + '"><textPath href="#ring">' + esc(ring) + "</textPath></text>" +
+    '<use href="#camel" x="78" y="58" width="44" height="33" style="color:' + col + '"/>' +
+    '<text x="100" y="112" text-anchor="middle" font-family="Fraunces, Georgia" font-weight="900" font-size="17" fill="' + col + '">' + esc(DATA.stamp.toUpperCase()) + "</text>" +
+    '<text x="100" y="142" text-anchor="middle" font-family="Fraunces, Georgia" font-weight="900" font-size="27" fill="' + col + '">' + pct + "%</text></svg>";
+}
+function finish() {
+  const key = "caravan-" + DATA.lesson + "-attempts";
+  const attempt = (parseInt(store(key) || "0", 10) || 0) + 1; store(key, String(attempt));
+  const pct = Math.round(100 * S.right / S.auto);
+  const bk = "caravan-" + DATA.lesson + "-best"; if (pct > (parseInt(store(bk) || "-1", 10))) store(bk, String(pct));
+  const band = pct >= 86 ? "Master Caravaneer" : pct >= 71 ? "Skilled Traveller" : pct >= 56 ? "Brave Explorer" : "Keep travelling!";
+  const mins = Math.max(1, Math.round((Date.now() - S.started) / 60000));
+  const bars = DATA.sections.map((s, si) => {
+    const r = S.res.filter(x => x.sec === si); if (!r.length) return "";
+    const ok = r.filter(x => x.ok).length;
+    return '<div class="r"><span>' + esc(s.title) + '</span><div class="b"><i style="width:' + (100 * ok / r.length) + '%"></i></div><span>' + ok + "/" + r.length + "</span></div>";
+  }).join("");
+  const w = S.writing.map(x => '<div class="mywrite"><small>' + esc(x.label) + ' · checklist ' + x.got + "/" + x.max + "</small>" + esc(x.text) + "</div>").join("");
+  $("passport").innerHTML = '<div class="head"><span>Silk Road Passport</span><span>Stop ' + DATA.lesson + "</span></div>" +
+    '<div class="stampwrap">' + stampSVG(pct) + "</div>" +
+    '<div class="who">' + esc($("name").value.trim()) + '</div><div class="grp">Group ' + esc($("group").value.trim()) + " · " + band + "</div>" +
+    '<div class="meta"><div>Correct<b>' + S.right + " / " + S.auto + "</b></div><div>Points<b>" + S.pts + "</b></div>" +
+    "<div>Best streak<b>🔥 " + S.best + "</b></div><div>Attempt<b>#" + attempt + " · " + mins + " min</b></div></div>" +
+    '<div class="bars" style="margin-top:12px">' + bars + "</div>" + w +
+    '<div class="grp" style="margin-top:10px">' + new Date().toLocaleString("en-GB") + "</div>" +
+    '<div class="shot">📸 Screenshot this passport and send it to your teacher</div>';
+  $("review").innerHTML = "<h2 class='serif' style='margin:0 0 6px;color:var(--deep)'>My answers</h2>" + S.res.map(x =>
+    '<div class="it' + (x.ok ? "" : " x") + '">' + esc(x.q) + "<br><b>" + esc(x.given || "—") + "</b>" + (x.ok ? "" : "<br>✓ " + esc(x.correct)) + "</div>").join("");
+  $("review").classList.add("hidden");
+  show("end");
+}
+$("showrev").onclick = () => $("review").classList.toggle("hidden");
+$("again").onclick = () => { build(); show("game"); drawRoute(); ask(); };
+</script>
+</body>
+</html>

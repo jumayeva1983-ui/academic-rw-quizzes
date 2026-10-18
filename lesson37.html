@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Caravan Challenge · Stop 37 · The Empty Office</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,900;1,9..144,500&family=Nunito:wght@400;600;700;800;900&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --lapis: #1d3b8b; --deep: #13285f; --turq: #0e9f9a; --saffron: #f3a21b; --pome: #d1344b;
+          --sand: #fbf4e8; --clay: #eadcc5; --ink: #1c1b2e; --muted: #6b6478; --ok: #17a362; --okbg: #dff5e9; --badbg: #fde4e8; }
+  * { box-sizing: border-box; }
+  html { background: var(--sand); }
+  body { margin: 0; color: var(--ink); background: var(--sand); font: 17px/1.55 "Nunito", system-ui, -apple-system, "Segoe UI", Arial, sans-serif; }
+  .bg { position: fixed; inset: 0; width: 100%; height: 100%; opacity: .07; pointer-events: none; z-index: 0; }
+  main, .top { position: relative; z-index: 1; }
+  .wrap { max-width: 680px; margin: 0 auto; padding: 16px; }
+  h1, h2, .serif { font-family: "Fraunces", Georgia, serif; line-height: 1.08; }
+  .kicker { font-weight: 900; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--turq); }
+  .hand { font-family: "Caveat", cursive; font-size: 22px; line-height: 1.15; color: var(--lapis); }
+  .hidden { display: none !important; }
+  button { font: inherit; cursor: pointer; border: 0; color: inherit; }
+  .btn { display: block; width: 100%; background: var(--saffron); color: var(--ink); font-weight: 900; font-size: 18px; border-radius: 16px; padding: 15px 22px; box-shadow: 0 4px 0 #b97708; }
+  .btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #b97708; }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .btn.blue { background: var(--lapis); color: #fff; box-shadow: 0 4px 0 #0c1b44; }
+  .btn.ghost { background: #fff; box-shadow: none; border: 2px solid var(--clay); }
+
+  /* ---------- start (book opener) ---------- */
+  .hero { position: relative; margin: 6px 0 34px; }
+  .hero svg, .hero img { display: block; width: 100%; height: auto; aspect-ratio: 640 / 300; object-fit: cover; border-radius: 26px; box-shadow: 0 10px 0 rgba(29,59,139,.12); }
+  .hero .tag { position: absolute; left: -6px; bottom: -22px; background: var(--pome); color: #fff; font: 900 26px "Fraunces", Georgia, serif; padding: 8px 18px; border-radius: 12px; transform: rotate(-2deg); box-shadow: 0 5px 0 var(--deep); }
+  .route-mini { display: flex; gap: 3px; align-items: center; margin: 10px 0 14px; flex-wrap: wrap; }
+  .route-mini i { width: 5px; height: 5px; border-radius: 50%; background: var(--clay); }
+  .route-mini i.d { background: var(--turq); } .route-mini i.n { width: 12px; height: 12px; background: var(--pome); box-shadow: 0 0 0 4px rgba(209,52,75,.2); }
+  .route-mini span { flex-basis: 100%; font-size: 12px; font-weight: 800; color: var(--muted); margin-top: 4px; letter-spacing: .08em; }
+  .opener h1 { font-size: 48px; font-weight: 900; color: var(--deep); margin: 6px 0 4px; letter-spacing: -.01em; }
+  .opener .sub { font: italic 500 21px "Fraunces", Georgia, serif; color: var(--pome); }
+  .pen { display: flex; gap: 12px; align-items: flex-start; margin: 20px 0; }
+  .avatar { flex: none; width: 56px; height: 56px; border-radius: 50%; background: var(--lapis); color: var(--saffron); border: 4px solid var(--saffron); display: grid; place-items: center; font: 900 12px/1 "Fraunces", Georgia; text-align: center; }
+  .bubble { background: #fff; border: 2px solid var(--clay); border-radius: 16px; padding: 10px 16px; }
+  .card { background: #fff; border-radius: 22px; padding: 18px; border: 2px solid var(--clay); margin: 14px 0; }
+  .card label { display: block; font-weight: 800; margin: 8px 0 6px; color: var(--muted); font-size: 14px; }
+  .card input { width: 100%; padding: 13px 14px; border-radius: 12px; border: 2px solid var(--clay); background: var(--sand); font: inherit; color: var(--ink); }
+  .card input:focus, textarea:focus { outline: none; border-color: var(--saffron); }
+  .cities { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 6px; margin-top: 14px; text-align: center; }
+  .cities div { background: var(--sand); border-radius: 12px; padding: 8px 4px; font-size: 12px; font-weight: 800; color: var(--muted); line-height: 1.25; }
+  .cities b { display: block; font: 900 15px "Fraunces", Georgia; color: var(--deep); }
+
+  /* ---------- sticky route ---------- */
+  .top { position: sticky; top: 0; z-index: 5; background: rgba(251,244,232,.94); backdrop-filter: blur(6px); border-bottom: 2px solid var(--clay); }
+  .top .wrap { padding: 10px 16px 8px; }
+  .stats { display: flex; justify-content: space-between; align-items: center; font-weight: 900; }
+  .stats .pts { color: var(--pome); font: 900 22px "Fraunces", Georgia; }
+  .stats .cnt { color: var(--muted); font-size: 14px; }
+  .stats .streak { background: #fff; border: 2px solid var(--clay); border-radius: 99px; padding: 1px 12px; font-size: 15px; transition: transform .2s; }
+  .stats .streak.hot { transform: scale(1.18); border-color: var(--saffron); }
+  .route { position: relative; height: 46px; margin-top: 4px; }
+  .route .line, .route .fill { position: absolute; left: 12px; top: 33px; height: 5px; border-radius: 9px; }
+  .route .line { right: 12px; background: var(--clay); }
+  .route .fill { background: linear-gradient(90deg, var(--turq), var(--saffron)); transition: width .45s; }
+  .route .city { position: absolute; top: 28px; width: 15px; height: 15px; margin-left: -7px; border-radius: 50%; background: var(--sand); border: 3px solid var(--clay); }
+  .route .city.done { background: var(--saffron); border-color: var(--saffron); }
+  .route .rider { position: absolute; top: 0; width: 44px; height: 33px; margin-left: -24px; color: var(--saffron); transition: left .45s; filter: drop-shadow(0 2px 0 rgba(0,0,0,.15)); }
+  .route .rider.walk { animation: walk .45s ease; }
+  @keyframes walk { 30% { transform: translateY(-4px) rotate(-3deg); } 60% { transform: translateY(0) rotate(2deg); } }
+  .citynames { display: flex; justify-content: space-between; font-size: 10px; font-weight: 900; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-top: 2px; }
+
+  /* ---------- question card ---------- */
+  .move { display: flex; align-items: center; gap: 10px; margin: 8px 0 10px; }
+  .move .num { width: 38px; height: 38px; border-radius: 50%; background: var(--saffron); display: grid; place-items: center; font: 900 18px "Fraunces", Georgia; flex: none; }
+  .move h2 { font-size: 26px; color: var(--deep); margin: 0; }
+  .move small { margin-left: auto; font-weight: 900; font-size: 12px; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; }
+  .q { background: #fff; border-radius: 24px; padding: 20px; border-top: 7px solid var(--c, var(--turq)); box-shadow: 0 8px 0 rgba(29,59,139,.08); animation: pop .3s ease; }
+  @keyframes pop { from { transform: translateY(12px); opacity: 0; } to { transform: none; opacity: 1; } }
+  .q .kind { font-weight: 900; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--c, var(--turq)); }
+  .q .stem { font: 700 22px/1.28 "Fraunces", Georgia, serif; margin: 6px 0 16px; }
+  .opts { display: grid; gap: 10px; }
+  .opts.tf { grid-template-columns: repeat(3, 1fr); }
+  .opt { text-align: left; background: var(--sand); border: 2px solid var(--clay); border-radius: 14px; padding: 13px 14px; font-weight: 700; display: flex; gap: 10px; align-items: flex-start; transition: transform .1s, border-color .1s; }
+  .opts.tf .opt { justify-content: center; text-align: center; }
+  .opt:hover:not(:disabled) { border-color: var(--lapis); transform: translateY(-1px); }
+  .opt .k { flex: none; width: 27px; height: 27px; border-radius: 8px; background: var(--lapis); color: #fff; display: grid; place-items: center; font-size: 13px; font-weight: 900; }
+  .opt.right { background: var(--okbg); border-color: var(--ok); }
+  .opt.wrong { background: var(--badbg); border-color: var(--pome); animation: shake .35s; }
+  .opt:disabled { cursor: default; }
+  @keyframes shake { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+  .sent { display: block; width: 100%; text-align: left; background: var(--sand); border: 2px dashed var(--clay); border-radius: 12px; padding: 10px 12px; margin: 8px 0; font-weight: 600; }
+  .sent:hover:not(:disabled) { border-color: var(--lapis); border-style: solid; }
+  .sent.right { background: var(--okbg); border: 2px solid var(--ok); } .sent.wrong { background: var(--badbg); border: 2px solid var(--pome); }
+  .slots { display: grid; gap: 8px; margin-bottom: 12px; }
+  .slot { display: grid; grid-template-columns: 112px 1fr; gap: 10px; align-items: stretch; }
+  .slot .lab { background: var(--deep); color: var(--saffron); border-radius: 12px; display: grid; place-items: center; font-weight: 900; font-size: 12px; text-align: center; padding: 6px; word-break: break-word; }
+  .slot .fill { min-height: 48px; border: 2px dashed var(--clay); border-radius: 12px; padding: 8px 12px; font-weight: 600; background: var(--sand); }
+  .slot .fill.on { border-style: solid; border-color: var(--lapis); background: #eef2fb; cursor: pointer; }
+  .slot .fill.right { border-color: var(--ok); background: var(--okbg); } .slot .fill.wrong { border-color: var(--pome); background: var(--badbg); }
+  .tiles .sent { border-style: solid; background: #fff; }
+  textarea { width: 100%; min-height: 130px; border: 2px solid var(--clay); border-radius: 14px; padding: 12px; font: 600 17px/1.5 "Nunito", sans-serif; background: var(--sand); resize: vertical; }
+  .checks { list-style: none; padding: 0; margin: 10px 0; display: grid; gap: 6px; }
+  .checks li { background: var(--sand); border-radius: 10px; padding: 7px 12px; font-weight: 700; color: var(--muted); }
+  .checks li.on { background: var(--okbg); color: #0e6b40; }
+  .checks li::before { content: "○  "; } .checks li.on::before { content: "✓  "; }
+  .wc { font-weight: 800; font-size: 14px; color: var(--muted); text-align: right; }
+  .fb { margin-top: 14px; border-radius: 16px; padding: 12px 16px; display: flex; gap: 10px; align-items: flex-start; }
+  .fb.ok { background: var(--okbg); } .fb.no { background: var(--badbg); }
+  .fb .hand { font-size: 21px; } .fb.ok .hand { color: #0e6b40; } .fb.no .hand { color: #8f1d2e; }
+  .fb .avatar { width: 46px; height: 46px; border-width: 3px; font-size: 9px; }
+  .avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
+  .avatar.pic { background: #fff; }
+  .next { margin-top: 14px; }
+  .article { background: #fff; border-radius: 22px; padding: 4px 18px; margin-bottom: 14px; border: 2px solid var(--clay); }
+  .article summary { cursor: pointer; padding: 12px 0; font: 900 20px "Fraunces", Georgia; color: var(--deep); list-style: none; }
+  .article summary::after { content: "  ▾"; color: var(--turq); }
+  .article p { margin: 0 0 12px; font-size: 16px; }
+  .article .L { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 6px; background: var(--turq); color: #fff; font-weight: 900; font-size: 13px; margin-right: 6px; }
+  .toast { position: fixed; left: 50%; top: 110px; transform: translateX(-50%); background: var(--pome); color: #fff; font-weight: 900; padding: 8px 18px; border-radius: 99px; z-index: 9; animation: toast 1.4s forwards; }
+  @keyframes toast { 0% { opacity: 0; transform: translate(-50%, 10px); } 15%, 75% { opacity: 1; transform: translate(-50%, 0); } 100% { opacity: 0; } }
+
+  /* ---------- passport ---------- */
+  .passport { background: #fff; border-radius: 26px; padding: 22px 18px; position: relative; border: 2px solid var(--clay); }
+  .passport::after { content: ""; position: absolute; inset: 9px; border: 2px dashed var(--clay); border-radius: 18px; pointer-events: none; }
+  .passport .head { display: flex; justify-content: space-between; font-weight: 900; font-size: 12px; letter-spacing: .16em; color: var(--lapis); text-transform: uppercase; }
+  .stampwrap { display: flex; justify-content: center; margin: 8px 0 4px; }
+  .stamp { width: 200px; height: 200px; transform: rotate(-9deg); animation: stamp .55s cubic-bezier(.2,1.6,.4,1); }
+  @keyframes stamp { from { transform: rotate(-9deg) scale(2.3); opacity: 0; } to { transform: rotate(-9deg) scale(1); opacity: 1; } }
+  .who { text-align: center; font: 900 28px "Fraunces", Georgia; color: var(--deep); }
+  .grp { text-align: center; color: var(--muted); font-weight: 700; }
+  .meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+  .meta div { background: var(--sand); border-radius: 12px; padding: 8px 10px; font-size: 13px; color: var(--muted); font-weight: 700; }
+  .meta b { display: block; color: var(--ink); font-size: 17px; }
+  .bars .r { display: grid; grid-template-columns: 1fr 100px 40px; gap: 8px; align-items: center; font-size: 13px; font-weight: 800; margin: 6px 0; }
+  .bars .b { height: 9px; border-radius: 9px; background: var(--clay); overflow: hidden; }
+  .bars .b i { display: block; height: 100%; background: linear-gradient(90deg, var(--turq), var(--lapis)); }
+  .mywrite { background: var(--sand); border-left: 5px solid var(--saffron); border-radius: 0 12px 12px 0; padding: 8px 12px; margin-top: 12px; font-size: 15px; }
+  .mywrite small { display: block; font-weight: 900; color: var(--muted); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
+  .shot { text-align: center; font-weight: 900; color: var(--pome); margin-top: 12px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .review .it { border-left: 4px solid var(--ok); padding: 6px 10px; margin: 8px 0; background: var(--sand); border-radius: 0 10px 10px 0; font-size: 15px; }
+  .review .it.x { border-color: var(--pome); }
+  /* ---------- Essay Domino ---------- */
+  .essay { display: grid; gap: 8px; margin-bottom: 14px; }
+  .para { border-radius: 14px; padding: 10px 12px; font-size: 15px; line-height: 1.5; border: 2px solid transparent; }
+  .para.intro { background: #d7e6f7; } .para.body { background: #fdf0d3; } .para.opp { background: #d9f0ee; } .para.concl { background: #f5dde1; }
+  .para.now { border-color: var(--lapis); background-color: #fff; }
+  .para .pl { display: block; font-weight: 900; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--deep); margin-bottom: 2px; }
+  .para .fn { display: inline-block; font-weight: 900; font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: #fff; background: var(--lapis); border-radius: 6px; padding: 0 6px; margin-right: 4px; vertical-align: 1px; }
+  .para .slotnext { display: block; margin-top: 6px; border: 2px dashed var(--saffron); border-radius: 10px; padding: 6px 10px; font-weight: 800; color: var(--muted); }
+  .para .slotnext b { color: var(--pome); }
+  .tilebox .sent { border-style: solid; background: #fff; }
+  .tilebox .sent.wrong { animation: shake .35s; }
+  .why { font-family: "Caveat", cursive; font-size: 20px; color: #8f1d2e; margin: 4px 0 0; }
+  .gtext { font-size: 17px; line-height: 2.1; }
+  .gap { display: inline-block; min-width: 120px; min-height: 30px; vertical-align: middle; border: 2px dashed var(--clay); border-radius: 10px; padding: 1px 10px; margin: 0 2px; background: var(--sand); font-weight: 800; line-height: 1.5; text-align: center; }
+  .gap.sel { border-color: var(--saffron); border-style: solid; }
+  .gap.on { border-style: solid; border-color: var(--lapis); background: #eef2fb; }
+  .gap.right { border-color: var(--ok); background: var(--okbg); } .gap.wrong { border-color: var(--pome); background: var(--badbg); }
+  .bank { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+  .bank button { background: #fff; border: 2px solid var(--lapis); border-radius: 99px; padding: 6px 14px; font-weight: 800; }
+  .ttext { font-size: 18px; line-height: 2.2; }
+  .tin { font: 800 17px "Nunito", sans-serif; color: var(--lapis); border: 0; border-bottom: 3px solid var(--clay); background: var(--sand); border-radius: 6px 6px 0 0; padding: 2px 6px; margin: 0 2px; outline: none; }
+  .tin:focus { border-color: var(--saffron); }
+  .tin.right { border-color: var(--ok); background: var(--okbg); } .tin.wrong { border-color: var(--pome); background: var(--badbg); }
+  .fix { font-weight: 900; color: var(--ok); font-size: 15px; margin: 0 4px; }
+  @media (max-width: 440px) { .opts.tf { grid-template-columns: 1fr; } .opener h1 { font-size: 38px; } .q .stem { font-size: 20px; } .slot { grid-template-columns: 84px 1fr; } .hero .tag { font-size: 21px; } }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute">
+  <defs>
+    <!-- camel facing RIGHT (original flat silhouette) -->
+    <symbol id="camel" viewBox="0 0 64 48">
+      <path d="M8 22 Q6 26 6 31" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M9 24 Q9 15 16 14 Q20 6 26 12 Q30 7 35 13 Q40 16 40 22 L44 12 Q46 6 51 6 Q57 6 58 9 Q58 11 54 11 L51 12 L46 26 Q44 31 37 31 L14 31 Q9 30 9 24 Z" fill="currentColor"/>
+      <g fill="currentColor"><rect x="13" y="29" width="3.2" height="16" rx="1.5"/><rect x="18.5" y="29" width="3.2" height="16" rx="1.5"/><rect x="31" y="29" width="3.2" height="16" rx="1.5"/><rect x="36.5" y="29" width="3.2" height="16" rx="1.5"/></g>
+      <circle cx="53" cy="8.3" r="1.1" fill="#1c1b2e"/>
+    </symbol>
+    <pattern id="girih" width="40" height="40" patternUnits="userSpaceOnUse">
+      <g fill="none" stroke="#1d3b8b" stroke-width="1.2"><rect x="10" y="10" width="20" height="20"/><rect x="10" y="10" width="20" height="20" transform="rotate(45 20 20)"/><path d="M0 0 L10 10 M40 0 L30 10 M0 40 L10 30 M40 40 L30 30"/></g>
+    </pattern>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f9d9a6"/><stop offset="1" stop-color="#fbf0dc"/></linearGradient>
+    <!-- Silk Road scene: sun, Bukhara-style skyline, dunes, caravan -->
+    <symbol id="scene" viewBox="0 0 640 300">
+      <rect width="640" height="300" fill="url(#sky)"/>
+      <circle cx="505" cy="92" r="46" fill="#f6a91d" opacity=".9"/>
+      <g fill="#7f97c9" opacity=".55">
+        <rect x="60" y="120" width="26" height="110"/><path d="M56 120 h34 l-4 -12 h-26 z"/><rect x="66" y="96" width="14" height="12"/><path d="M64 96 q9 -16 18 0 z"/>
+        <path d="M120 230 v-62 q35 -46 70 0 v62 z"/><rect x="110" y="166" width="90" height="64"/>
+        <path d="M230 230 v-70 h110 v70 z"/><path d="M260 230 v-46 q25 -28 50 0 v46 z" fill="#5f79b5"/>
+        <path d="M352 230 v-40 q30 -50 60 0 v40 z"/>
+      </g>
+      <g fill="#1d3b8b">
+        <path d="M150 196 q38 -56 76 0 z" fill="#12b3ad"/><rect x="146" y="194" width="84" height="8" fill="#f6a91d"/>
+        <rect x="140" y="202" width="96" height="66"/>
+        <path d="M170 268 v-34 q18 -24 36 0 v34 z" fill="#101f4d"/>
+        <rect x="248" y="140" width="20" height="128"/><path d="M244 140 h28 l-3 -10 h-22 z" fill="#d1344b"/><rect x="252" y="122" width="12" height="8"/><path d="M250 122 q8 -14 16 0 z" fill="#12b3ad"/>
+      </g>
+      <path d="M0 262 Q120 236 240 258 T480 252 T640 246 V300 H0 Z" fill="#eccf9c"/>
+      <path d="M0 280 Q160 258 320 278 T640 270 V300 H0 Z" fill="#e2b979"/>
+      <g color="#7a4a1c">
+        <use href="#camel" x="330" y="220" width="64" height="48"/>
+        <use href="#camel" x="392" y="214" width="70" height="52"/>
+        <use href="#camel" x="460" y="208" width="78" height="58"/>
+      </g>
+      <path d="M352 232 L398 228 M420 226 L466 220" stroke="#7a4a1c" stroke-width="1.5"/>
+    </symbol>
+  </defs>
+</svg>
+
+<svg class="bg"><rect width="100%" height="100%" fill="url(#girih)"/></svg>
+
+<main id="start" class="wrap opener">
+  <div class="route-mini" id="routeMini"></div>
+  <div class="hero" id="hero"></div>
+  <div class="kicker">Caravan Challenge · Summary from Multiple Sources</div>
+  <h1>The Empty Office</h1>
+  <div class="sub">Remote Work</div>
+  <div class="pen"><div class="avatar">PROF<br>PEN</div><div class="bubble hand">Six cities. One stamp. Read, think, build and write — then show me what you’ve got!</div></div>
+  <div class="card">
+    <label for="name">Your full name</label><input id="name" autocomplete="name" placeholder="e.g. Aziza Karimova">
+    <label for="group">Group</label><input id="group" placeholder="e.g. 201">
+    <div class="cities" id="cityList"></div>
+  </div>
+  <button class="btn" id="go" disabled>Start the journey</button>
+</main>
+
+<div id="game" class="hidden">
+  <div class="top"><div class="wrap">
+    <div class="stats"><span class="pts" id="pts">0 pts</span><span class="cnt" id="cnt"></span><span class="streak" id="streak">🔥 0</span></div>
+    <div class="route" id="route"><div class="line"></div><div class="fill" id="fill"></div><svg class="rider" id="rider"><use href="#camel"/></svg></div>
+    <div class="citynames" id="cityNames"></div>
+  </div></div>
+  <main class="wrap" id="stage"></main>
+</div>
+
+<main id="end" class="wrap hidden">
+  <div class="passport" id="passport"></div>
+  <div class="row2"><button class="btn ghost" id="again">Play again</button><button class="btn blue" id="showrev">My answers</button></div>
+  <div class="card review hidden" id="review"></div>
+</main>
+
+<script>
+const DATA = {"lesson": 37, "unit": 16, "module": 4, "title": "The Empty Office", "genre": "Summary from Multiple Sources", "theme": "Remote Work", "level": "C1", "stamp": "Gijduvan", "heroTag": "Office, home or both?", "hero": "img/L37_hero.jpg", "note": "Conventions: 'mcq' options[0] is correct (shuffled in the browser); 'order' items are listed in the correct order (shuffled in the browser); 'pick' and 'tfng' use an explicit answer; 'write' is scored by its checklist. 'chain' steps are in the correct order (Essay Domino); 'gaps' and 'type' mark answers with [[…]] in the text, alternatives separated by |. Transfer rule: the quiz never repeats the book's texts or exercises - same words, grammar and genre, new texts and tasks (the Essay Domino summary is a new C1 summary on a new task; its three sources are fictional).", "sections": [{"id": "words", "title": "Word Bazaar", "shuffle": true, "questions": [{"type": "mcq", "q": "After she moved to a flat near the office, her daily ______ fell from an hour to ten minutes.", "options": ["commute", "boundary", "burnout", "isolation"], "explain": "commute = the daily trip to and from work."}, {"type": "mcq", "q": "Two days in the office and three days at home: this is a ______ schedule.", "options": ["hybrid", "rural", "manual", "partial"], "explain": "hybrid = a mix of two ways of working."}, {"type": "mcq", "q": "Months without seeing a single colleague left him with strong feelings of ______.", "options": ["isolation", "productivity", "flexibility", "collaboration"], "explain": "isolation = being cut off from other people."}, {"type": "mcq", "q": "When your bedroom is also your office, the ______ between work and rest can disappear.", "options": ["boundary", "commute", "freelancer", "deadline"], "explain": "a boundary = a line between two areas, here work and private life."}, {"type": "mcq", "q": "Your task is to ______ the ideas from four articles into one paragraph organised by theme.", "options": ["synthesise", "separate", "multiply", "postpone"], "explain": "synthesise = combine ideas from different sources into one text."}]}, {"id": "read", "title": "Read like a detective", "shuffle": false, "passageTitle": "Two New Voices on Working from Home", "passage": ["A  Source 1 · a blog post by Aziza Karimova (2024) — a fictional writer, created for this quiz. When people discuss remote work, they usually talk about discipline or technology. In my experience, the real problem is space. Many young workers live with parents, brothers and sisters, and finding a quiet corner for an online meeting can be almost impossible. My own 'office' is a small table between the fridge and the window.", "B  Noise is not the only issue. Working at the same table where the family eats makes it hard to switch off in the evening, so the working day slowly grows longer. I now finish work by closing my laptop and putting it away in a cupboard. It is a small ritual, but it tells my brain that the day is over. For me, remote work succeeds only when work has a clear place and a clear end.", "C  Source 2 · a report by Silk Line Research (2024) — a fictional consultancy, created for this quiz. Several companies that introduced hybrid schedules have reported mixed results. Employees generally welcome the chance to work at home on some days, and many say that they waste less time travelling and feel more trusted by their managers.", "D  Managers, however, note that hybrid work only succeeds when teams agree on shared office days. If everyone chooses different days, the office is half-empty, and colleagues who work for the same company still meet only through screens. Some companies have also found that new staff ask fewer questions when their colleagues are working from home.", "E  The report concludes that the success of remote work depends less on technology than on clear agreements: where people work, when they are available and how they communicate. Without such agreements, it warns, flexibility can quickly turn into confusion."], "questions": [{"type": "mcq", "q": "What is the main idea of Source 1 (paragraphs A–B)?", "options": ["Remote work needs its own place and a clear finishing time.", "Young workers should rent an office outside the family home.", "Discipline matters more than space for people who work at home.", "Family members should stay quiet during every online meeting."], "explain": "Karimova: remote work succeeds only when work has a clear place and a clear end."}, {"type": "mcq", "q": "What is the main idea of Source 2 (paragraphs C–E)?", "options": ["Hybrid work succeeds when teams agree on clear shared rules.", "Most employees now prefer to work at home every single day.", "Technology is the main reason why hybrid schedules often fail.", "Companies should stop hiring new staff for their hybrid teams."], "explain": "E: success depends less on technology than on clear agreements."}, {"type": "tfng", "q": "Karimova believes that technology is the biggest problem of remote work.", "answer": "F", "explain": "A: people usually talk about technology, but 'the real problem is space'."}, {"type": "tfng", "q": "Karimova works for a company based in another country.", "answer": "NG", "explain": "The blog never says who her employer is."}, {"type": "tfng", "q": "According to the report, some employees feel more trusted when they can work at home.", "answer": "T", "explain": "C: many say they feel more trusted by their managers."}, {"type": "tfng", "q": "The report says that hybrid schedules have worked well in every company.", "answer": "F", "explain": "C: companies have reported mixed results."}, {"type": "pick", "q": "Paragraph A. Tap the sentence that is a DETAIL (a petal), not a key point.", "text": ["When people discuss remote work, they usually talk about discipline or technology.", "In my experience, the real problem is space.", "Many young workers live with parents, brothers and sisters, and finding a quiet corner for an online meeting can be almost impossible.", "My own 'office' is a small table between the fridge and the window."], "answer": 3, "explain": "The table between the fridge and the window is a personal example — leave it out of a summary."}, {"type": "pick", "q": "Paragraph D. Tap the sentence that contains the KEY POINT (the nectar).", "text": ["Managers, however, note that hybrid work only succeeds when teams agree on shared office days.", "If everyone chooses different days, the office is half-empty, and colleagues who work for the same company still meet only through screens.", "Some companies have also found that new staff ask fewer questions when their colleagues are working from home."], "answer": 0, "explain": "The first sentence gives the point; the second shows what happens without it."}, {"type": "mcq", "q": "Which point do BOTH sources make?", "options": ["Remote work works best with clear limits and agreements.", "Remote workers waste much less time travelling to work.", "New staff learn more slowly when colleagues are at home.", "Family homes are too noisy for most online meetings."], "explain": "Karimova: a clear place and a clear end; the report: clear agreements. The other points appear in only one source."}]}, {"id": "tools", "title": "Language toolkit", "shuffle": true, "questions": [{"type": "mcq", "q": "Turner and Yusupova ______ that clear routines protect remote workers.", "options": ["argue", "argues", "arguing", "is arguing"], "explain": "A plural subject (two writers) takes a plural verb in the present simple."}, {"type": "mcq", "q": "______ the report, flexibility can quickly turn into confusion.", "options": ["According to", "According", "Accordingly", "As according to"], "explain": "According to X, + clause. Never 'According to X says'."}, {"type": "mcq", "q": "In their 2022 study, Patel and Kim ______ 200 students and found that most of them replayed difficult parts.", "options": ["surveyed", "survey", "have surveyed", "are surveying"], "explain": "One study and what it did → past simple. An author’s view → present simple (they argue); the state of the field → present perfect (studies have shown)."}, {"type": "mcq", "q": "Which sentence reports a survey most carefully?", "options": ["The survey suggests that shared office days may help teamwork.", "The survey proves that shared office days always help teamwork.", "Shared office days help teamwork in every company, says the survey.", "The survey shows clearly that teamwork needs shared office days."], "explain": "suggests + may = a careful (hedged) claim. 'proves' and 'always' say more than a small survey can."}, {"type": "mcq", "q": "The manager admits that hybrid work has problems but still supports it. The manager ______ that hybrid work has drawbacks.", "options": ["acknowledges", "demonstrates", "exaggerates", "celebrates"], "explain": "acknowledge = admit that something is true, often before making another point."}, {"type": "mcq", "q": "______ that a four-day week could reduce burnout.", "options": ["It has been suggested", "It has suggested", "It is suggesting", "There has been suggested"], "explain": "Impersonal passive: It + has been + past participle + that … reports a view without naming who holds it."}, {"type": "mcq", "q": "Choose the best nominalised version: “Workers commute less, so they have more free time.”", "options": ["Reduced commuting gives workers more free time.", "Workers commuting less is giving more free time.", "The commute less of workers gives free time.", "Less commute workers have more of free time."], "explain": "commute less (verb) → reduced commuting (noun phrase): one compact, academic subject."}]}, {"id": "blueprint", "title": "The Blueprint", "shuffle": false, "questions": [{"type": "order", "q": "Rebuild the formula! Put each part of a multi-source summary into the right place in the jar.", "items": ["Sources + years → the question they discuss", "Shared point → sources that agree → one source adds", "Point of difference → X …, whereas / by contrast Y …", "Practical answers → who proposes what", "Taken together → what the sources suggest (no opinion)"], "labels": ["The label · Topic", "Cell 1 · Agree", "Cell 2 · Differ", "Cell 3 · Add", "The honey · Overall"], "explain": "This is the whole formula of a summary from multiple sources: topic → themes across sources → overall. It works for every topic."}, {"type": "mcq", "q": "What is the job of the overall sentence (“Taken together, …”)?", "options": ["It states what the sources suggest as a group.", "It gives the writer’s own view of the topic.", "It adds a new source that was not mentioned.", "It lists the sources again in date order."], "explain": "The overall sentence combines the sources. It never adds your opinion or a new source."}, {"type": "mcq", "q": "Which sentence is a synthesis, not a list?", "options": ["Both writers stress clear limits, but they look at different places.", "Karimova writes about her home. The report writes about companies.", "Source 1 is a blog post and Source 2 is a consultancy report.", "First I summarise Source 1, and then I summarise Source 2."], "explain": "A synthesis connects the sources in one idea: both … but …"}, {"type": "mcq", "q": "Which of these does NOT belong in a multi-source summary?", "options": ["Your own opinion about remote work", "The names of the writers you report", "Linkers that connect different sources", "Key points written in your own words"], "explain": "A summary reports the sources. Your opinion stays out of the jar."}]}, {"id": "domino", "title": "Essay Domino", "shuffle": false, "questions": [{"type": "chain", "para": "The label · Topic", "tone": "intro", "q": "Build THE TOPIC of a C1 summary: “Summarise what three sources say about recorded lectures: do they help students to learn?” (All three sources are fictional.) Tap the tile that comes next.", "steps": [{"label": "Topic sentence", "hint": "the sources and the question", "t": "Three recent sources examine whether recorded lectures help university students to learn (Nazarova, 2023; Patel & Kim, 2022; Silk Road Student Union, 2024)."}, {"label": "Map", "hint": "where the sources agree and differ", "t": "While the writers broadly converge on the benefits of recordings, they differ markedly on their effect on attendance."}], "traps": [{"t": "In my opinion, recorded lectures are the future of every university.", "why": "A summary reports the sources. Your own opinion stays out of the jar."}, {"t": "Source 1 is a blog, Source 2 is a review and Source 3 is a survey.", "why": "Listing the types of source is not a topic sentence: it does not name the question."}], "explain": "Topic formula: sources + years → the question → a map of where they agree and differ."}, {"type": "chain", "para": "Cell 1 · Agree", "tone": "body", "q": "Fill CELL 1: what the sources share. Tap the tile that comes next.", "steps": [{"label": "Shared point", "hint": "the point all sources make", "t": "All three sources highlight the flexibility that recordings offer."}, {"label": "Sources that agree", "hint": "two voices on the same point", "t": "Patel and Kim report that students tend to replay difficult sections before exams, and the Student Union survey indicates that working students value being able to study at night."}, {"label": "One source adds", "hint": "what only one writer says", "t": "Nazarova adds that recordings appear to be particularly helpful for students who learn in a second language."}], "traps": [{"t": "For example, my cousin watches every lecture at two in the morning.", "why": "A personal story is a petal, and it does not come from the sources."}], "explain": "Cell formula: shared point → sources that agree → one source adds."}, {"type": "chain", "para": "Cell 2 · Differ", "tone": "opp", "q": "Fill CELL 2: where the sources differ. Tap the tile that comes next.", "steps": [{"label": "Point of difference", "hint": "name the disagreement", "t": "The sources diverge, however, on the question of attendance."}, {"label": "First view", "hint": "one writer’s position", "t": "Nazarova contends that half-empty lecture halls are a direct consequence of recording every class."}, {"label": "Contrasting view", "hint": "the other side, with a linker", "t": "Patel and Kim, by contrast, caution that the evidence for such a link is limited, since attendance appears to depend on many other factors."}], "traps": [{"t": "Nazarova says about empty halls, and Patel and Kim says about evidence.", "why": "Two errors: ‘says about’ is not English, and two writers take a plural verb."}], "explain": "Difference formula: point of difference → first view → contrasting view (by contrast / whereas)."}, {"type": "chain", "para": "The honey · Overall", "tone": "concl", "q": "Fill THE JAR: the overall sentences. Tap the tile that comes next.", "steps": [{"label": "Overall", "hint": "what the sources suggest together", "t": "Taken together, the sources suggest that recordings support learning when they supplement live teaching rather than replace it."}, {"label": "Open question", "hint": "what the sources leave unresolved", "t": "What remains unresolved is whether their availability changes students’ decision to attend."}], "traps": [{"t": "Therefore, universities must record every single lecture from now on.", "why": "A recommendation of your own is an opinion. The overall sentence reports the sources."}, {"t": "In conclusion, Nazarova also writes about cheap laptops for students.", "why": "Never add a new point in the overall sentence."}], "explain": "Overall formula: Taken together → what the sources suggest → what they leave open."}, {"type": "gaps", "q": "Fill the mortar. Tap a tile, then a gap. Three tiles are extra.", "text": "All three sources [[highlight]] the flexibility that recordings offer. Nazarova [[adds that]] recordings help students who learn in a second language. The sources [[diverge]], however, on attendance. Patel and Kim, [[by contrast]], caution that the evidence is limited. [[Taken together]], the sources suggest that recordings support live teaching.", "extra": ["Because of", "Such as", "In my opinion"], "explain": "Reporting verbs and source linkers are the mortar of a C1 summary."}, {"type": "type", "q": "Write it from memory. The first letters will help you.", "text": "The writers broadly [[converge]] on the benefits of recordings.", "explain": "converge = reach the same point or view."}, {"type": "type", "q": "Write it from memory. The first letters will help you.", "text": "Patel and Kim [[caution]] that the evidence for such a link is [[limited]].", "explain": "caution that … = report a warning; limited evidence = not much evidence."}, {"type": "type", "q": "Write it from memory. The first letters will help you.", "text": "Recordings [[appear]] to be particularly helpful for students who learn in a second language.", "explain": "appear to = a hedge: the claim is careful, not absolute."}, {"type": "type", "q": "Write it from memory. The first letters will help you.", "text": "[[Taken together]], the sources suggest that recordings [[supplement|complement]] live teaching rather than replace it.", "explain": "Taken together = a C1 way to open the overall sentence; supplement = add to something to make it better."}]}, {"id": "write", "title": "Write it", "shuffle": false, "questions": [{"type": "mcq", "q": "Petals → Nectar. “Honestly, my laptop and my dinner share one table, and at nine at night I'm still answering emails!” Choose the best key point.", "options": ["Working at home can stretch the working day.", "The writer eats dinner right next to a laptop.", "Honestly, laptops and dinners should not mix!", "Answering emails after nine is always wrong."], "explain": "Short, general, in your own words — the story and the feeling are petals."}, {"type": "mcq", "q": "Which sentence is too informal for a summary?", "options": ["Karimova says remote work is kind of a nightmare at home.", "Karimova notes that space at home is often very limited.", "The report warns that flexibility can lead to confusion.", "Both sources stress the value of clear agreements."], "explain": "'kind of a nightmare' is informal and emotional."}, {"type": "write", "q": "Your turn! Write ONE synthesis sentence that connects Source 1 (Karimova) and Source 2 (the Silk Line report) from the quiz text.", "minWords": 15, "maxWords": 50, "checks": [{"label": "Names Karimova (Source 1)", "any": ["karimova", "source 1"]}, {"label": "Names the report (Source 2)", "any": ["silk line", "report", "source 2"]}, {"label": "Uses a source linker (both, whereas, similarly, unlike …)", "any": ["both", "whereas", "while", "similarly", "in contrast", "unlike", "like ", "likewise", "also"]}, {"label": "Uses a reporting verb", "any": ["argue", "suggest", "note", "warn", "point", "stress", "emphasi", "claim", "state", "report", "highlight", "focus", "agree", "conclude"]}, {"label": "No personal opinion", "none": ["i think", "in my opinion", "i believe", "my view", "i feel"]}, {"label": "No contractions (don't, it's …)", "none": ["n't", "n’t", "it's", "it’s", "that's", "that’s", "i'm", "i’m", "they're", "they’re", "we're", "we’re", "you're", "you’re", "there's", "there’s", "what's", "what’s"]}], "explain": "Your synthesis sentence appears in your passport so your teacher can read it.", "label": "My synthesis sentence"}, {"type": "write", "label": "My theme paragraph", "q": "Your turn! Write a short THEME paragraph (agreement → difference) about Karimova and the Silk Line report from the quiz text. Report only — no opinion.", "minWords": 35, "maxWords": 90, "checks": [{"label": "Names Karimova (Source 1)", "any": ["karimova", "source 1"]}, {"label": "Names the report (Source 2)", "any": ["silk line", "report", "source 2"]}, {"label": "Shows agreement (both, similarly, like …)", "any": ["both", "similarly", "likewise", "like ", "converge"]}, {"label": "Shows difference (whereas, by contrast, unlike …)", "any": ["whereas", "by contrast", "in contrast", "unlike", "while"]}, {"label": "Uses a reporting verb", "any": ["argue", "suggest", "note", "warn", "caution", "acknowledge", "highlight", "contend", "report", "stress", "conclude"]}, {"label": "No personal opinion", "none": ["i think", "in my opinion", "i believe", "my view", "i feel"]}, {"label": "No contractions (don't, it's …)", "none": ["n't", "n’t", "it's", "it’s", "that's", "that’s", "i'm", "i’m", "they're", "they’re", "there's", "there’s"]}], "explain": "Your paragraph appears in your passport so your teacher can read it."}]}], "avatar": "img/ProfPen_avatar.png"};
+const CITIES = ["Samarkand", "Bukhara", "Khiva", "Shahrisabz", "Termez", "Kokand", "Margilan"];
+const COLORS = ["var(--turq)", "var(--saffron)", "var(--pome)", "var(--lapis)", "var(--turq)", "var(--saffron)"];
+const KIND = { mcq: "Choose the answer", tfng: "True, False or Not Given?", pick: "Find it in the text", order: "Put in order", write: "Write", chain: "Essay domino", gaps: "Fill the mortar", type: "Write it from memory" };
+const TFNG = [["T", "True"], ["F", "False"], ["NG", "Not Given"]];
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+function rnd(n) { try { const a = new Uint32Array(1); crypto.getRandomValues(a); return a[0] % n; } catch (e) { return Math.floor(Math.random() * n); } }
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rnd(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
+const AV = () => DATA.avatar ? '<div class="avatar pic"><img src="' + esc(DATA.avatar) + '" alt="Prof. Pen"></div>' : '<div class="avatar">PROF<br>PEN</div>';
+const words = t => (t.trim().match(/[A-Za-z’'-]+/g) || []).length;
+
+// ---------- opener ----------
+(function opener() {
+  let m = ""; for (let i = 1; i <= 45; i++) m += "<i class='" + (i < DATA.lesson ? "d" : i === DATA.lesson ? "n" : "") + "'></i>";
+  $("routeMini").innerHTML = m + "<span>STOP " + DATA.lesson + " OF 45</span>";
+  $("hero").innerHTML = (DATA.hero ? '<img src="' + esc(DATA.hero) + '" alt="">' : '<svg viewBox="0 0 640 300"><use href="#scene"/></svg>') +
+    (DATA.heroTag ? '<div class="tag">' + esc(DATA.heroTag) + "</div>" : "");
+  if (DATA.avatar) document.querySelectorAll(".pen .avatar").forEach(a => a.outerHTML = AV());
+  $("cityList").innerHTML = DATA.sections.map((s, i) => "<div><b>" + CITIES[i] + "</b>" + esc(s.title) + "</div>").join("");
+})();
+const ready = () => { $("go").disabled = !($("name").value.trim().length > 2 && $("group").value.trim()); };
+$("name").oninput = ready; $("group").oninput = ready;
+$("go").onclick = () => { build(); show("game"); drawRoute(); ask(); };
+function show(id) { ["start", "game", "end"].forEach(x => $(x).classList.toggle("hidden", x !== id)); scrollTo(0, 0); }
+
+// ---------- state ----------
+let S;
+function build() {
+  const qs = [];
+  DATA.sections.forEach((s, si) => {
+    let list = s.questions.map(q => {
+      if (q.type === "mcq") return { ...q, sec: si, opts: shuffle(q.options.map((t, j) => ({ k: "o" + j, t }))), correct: "o0" };
+      if (q.type === "tfng") return { ...q, sec: si, opts: TFNG.map(([k, t]) => ({ k, t })), correct: q.answer };
+      if (q.type === "order") { let o = shuffle(q.items.map((t, j) => ({ k: j, t }))); while (o.length > 1 && o.every((x, j) => x.k === j)) o = shuffle(o); return { ...q, sec: si, tiles: o }; }
+      if (q.type === "gaps") { const ans = [...q.text.matchAll(/\[\[(.+?)\]\]/g)].map(m => m[1]); return { ...q, sec: si, ans, tiles: shuffle(ans.concat(q.extra || []).map((t, j) => ({ k: j, t }))) }; }
+      return { ...q, sec: si };
+    });
+    if (s.shuffle) list = shuffle(list);
+    qs.push(...list);
+  });
+  S = { qs, i: 0, pts: 0, streak: 0, best: 0, right: 0, auto: qs.filter(q => q.type !== "write").length, res: [], writing: [], started: Date.now(), built: [] };
+}
+
+// ---------- route ----------
+function drawRoute() {
+  const n = DATA.sections.length;
+  $("route").querySelectorAll(".city").forEach(e => e.remove());
+  for (let k = 0; k < n; k++) {
+    const d = document.createElement("div"); d.className = "city"; d.id = "c" + k;
+    d.style.left = "calc(12px + (100% - 24px) * " + (k / (n - 1)) + ")"; $("route").appendChild(d);
+  }
+  $("cityNames").innerHTML = DATA.sections.map((s, i) => "<span>" + CITIES[i] + "</span>").join("");
+}
+function updateTop(walk) {
+  const total = S.qs.length, f = Math.min(S.i / (total - 1 || 1), 1);
+  $("fill").style.width = "calc((100% - 24px) * " + f + ")";
+  $("rider").style.left = "calc(12px + (100% - 24px) * " + f + ")";
+  if (walk) { $("rider").classList.remove("walk"); void $("rider").offsetWidth; $("rider").classList.add("walk"); }
+  const sec = S.qs[S.i].sec;
+  for (let k = 0; k < DATA.sections.length; k++) $("c" + k).classList.toggle("done", k <= sec);
+  $("pts").textContent = S.pts + " pts";
+  $("cnt").textContent = (S.i + 1) + " / " + total;
+  $("streak").textContent = "🔥 " + S.streak;
+}
+
+// ---------- questions ----------
+function ask(walk) {
+  updateTop(walk);
+  const q = S.qs[S.i], s = DATA.sections[q.sec];
+  const first = S.qs.findIndex(x => x.sec === q.sec) === S.i;
+  let h = '<div class="move"><div class="num">' + (q.sec + 1) + '</div><h2>' + esc(s.title) + "</h2><small>" + CITIES[q.sec] + "</small></div>";
+  if (s.passage) h += '<details class="article"' + (first ? " open" : "") + "><summary>📜 " + esc(s.passageTitle) + "</summary>" +
+    s.passage.map(p => { const m = p.match(/^([A-G])\s+(.*)$/); return "<p>" + (m ? '<span class="L">' + m[1] + "</span>" + esc(m[2]) : esc(p)) + "</p>"; }).join("") + "</details>";
+  h += '<div class="q" style="--c:' + COLORS[q.sec] + '"><div class="kind">' + KIND[q.type] + '</div><div class="stem">' + esc(q.q) + "</div>";
+  if (q.type === "mcq" || q.type === "tfng") {
+    h += '<div class="opts' + (q.type === "tfng" ? " tf" : "") + '">' + q.opts.map((o, j) =>
+      '<button class="opt" data-k="' + o.k + '">' + (q.type === "tfng" ? "" : '<span class="k">' + "ABCD"[j] + "</span>") + "<span>" + esc(o.t) + "</span></button>").join("") + "</div>";
+  } else if (q.type === "pick") {
+    h += q.text.map((t, j) => '<button class="sent" data-j="' + j + '">' + esc(t) + "</button>").join("");
+  } else if (q.type === "order") {
+    h += '<div class="slots">' + q.labels.map((l, j) => '<div class="slot"><div class="lab">' + esc(l) + '</div><div class="fill" data-slot="' + j + '"></div></div>').join("") + "</div>";
+    h += '<div class="tiles" id="tiles"></div><button class="btn blue hidden" id="chk">Check my order</button>';
+  } else if (q.type === "chain") {
+    h += '<div class="essay" id="essay"></div><div class="tilebox" id="tiles"></div><div id="why"></div>';
+  } else if (q.type === "gaps") {
+    let n = 0; h += '<div class="gtext">' + q.text.split(/\[\[.+?\]\]/).map((part, j, a) => esc(part) + (j < a.length - 1 ? '<button class="gap" data-g="' + (n++) + '"></button>' : "")).join("") + '</div><div class="bank" id="bank"></div><button class="btn blue hidden" id="chk">Check the mortar</button>';
+  } else if (q.type === "type") {
+    let n = 0; h += '<div class="ttext">' + q.text.split(/\[\[.+?\]\]/).map((part, j, a) => {
+      if (j === a.length - 1) return esc(part);
+      const ans = q.text.match(/\[\[(.+?)\]\]/g)[j].slice(2, -2).split("|")[0];
+      const hint = ans.split(" ").map(w => w[0] + "…").join(" ");
+      return esc(part) + '<input class="tin" data-t="' + (n++) + '" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="' + esc(hint) + '" style="width:' + Math.max(70, ans.length * 11 + 24) + 'px">';
+    }).join("") + '</div><button class="btn blue" id="chk" style="margin-top:12px">Check my words</button>';
+  } else if (q.type === "write") {
+    h += '<textarea id="ta" placeholder="Start typing here…"></textarea><div class="wc" id="wc">0 words</div>' +
+      '<ul class="checks" id="cl">' + q.checks.map(c => "<li>" + esc(c.label) + "</li>").join("") + '<li id="len">' + q.minWords + "–" + q.maxWords + " words</li></ul>" +
+      '<button class="btn blue" id="sub" disabled>Submit</button>';
+  }
+  h += '<div id="fb"></div></div>';
+  $("stage").innerHTML = h;
+  if (q.type === "mcq" || q.type === "tfng") $("stage").querySelectorAll(".opt").forEach(b => b.onclick = () => grade(b.dataset.k === q.correct, () => {
+    $("stage").querySelectorAll(".opt").forEach(x => { x.disabled = true; if (x.dataset.k === q.correct) x.classList.add("right"); else if (x === b) x.classList.add("wrong"); });
+  }, (q.opts.find(o => o.k === b.dataset.k) || {}).t, (q.opts.find(o => o.k === q.correct) || {}).t));
+  if (q.type === "pick") $("stage").querySelectorAll(".sent").forEach(b => b.onclick = () => grade(+b.dataset.j === q.answer, () => {
+    $("stage").querySelectorAll(".sent").forEach(x => { x.disabled = true; if (+x.dataset.j === q.answer) x.classList.add("right"); else if (x === b) x.classList.add("wrong"); });
+  }, b.textContent, q.text[q.answer]));
+  if (q.type === "order") orderUI(q);
+  if (q.type === "chain") chainUI(q);
+  if (q.type === "gaps") gapsUI(q);
+  if (q.type === "type") typeUI(q);
+  if (q.type === "write") writeUI(q);
+}
+function orderUI(q) {
+  const placed = Array(q.items.length).fill(null);
+  const draw = () => {
+    $("stage").querySelectorAll(".fill").forEach((f, j) => { f.textContent = placed[j] ? placed[j].t : ""; f.classList.toggle("on", !!placed[j]); });
+    $("tiles").innerHTML = q.tiles.filter(t => !placed.includes(t)).map(t => '<button class="sent" data-k="' + t.k + '">' + esc(t.t) + "</button>").join("");
+    $("tiles").querySelectorAll(".sent").forEach(b => b.onclick = () => { const t = q.tiles.find(x => x.k === +b.dataset.k); placed[placed.indexOf(null)] = t; draw(); });
+    $("chk").classList.toggle("hidden", placed.includes(null));
+  };
+  $("stage").querySelectorAll(".fill").forEach((f, j) => f.onclick = () => { if (!f.dataset.done && placed[j]) { placed[j] = null; draw(); } });
+  $("chk").onclick = () => {
+    const ok = placed.every((t, j) => t.k === j);
+    grade(ok, () => {
+      $("chk").remove();
+      $("stage").querySelectorAll(".fill").forEach((f, j) => { f.dataset.done = 1; f.classList.add(placed[j].k === j ? "right" : "wrong"); });
+    }, placed.map(t => t.t.split(" ").slice(0, 3).join(" ") + "…").join(" → "), q.items.map(t => t.split(" ").slice(0, 3).join(" ") + "…").join(" → "));
+  };
+  draw();
+}
+function writeUI(q) {
+  const ta = $("ta"), lis = $("cl").querySelectorAll("li");
+  const test = t => {
+    const low = " " + t.toLowerCase().replace(/\s+/g, " ") + " ";
+    return q.checks.map(c => (c.any ? c.any.some(w => low.includes(w)) : !c.none.some(w => low.includes(w))) && t.trim().length > 0);
+  };
+  ta.oninput = () => {
+    const n = words(ta.value), r = test(ta.value);
+    r.forEach((v, j) => lis[j].classList.toggle("on", v));
+    const okLen = n >= q.minWords && n <= q.maxWords;
+    $("len").classList.toggle("on", okLen);
+    $("wc").textContent = n + " words";
+    $("sub").disabled = n < q.minWords;
+  };
+  $("sub").onclick = () => {
+    const r = test(ta.value), n = words(ta.value), okLen = n >= q.minWords && n <= q.maxWords;
+    const got = r.filter(Boolean).length + (okLen ? 1 : 0), max = r.length + 1;
+    S.pts += got * 5; S.writing.push({ q: q.q, label: q.label || "My writing", text: ta.value.trim(), got, max });
+    ta.readOnly = true; $("sub").remove();
+    feedback(got === max, (got === max ? "Brilliant — every box is ticked! " : got + " of " + max + " boxes ticked. ") + "+" + got * 5 + " pts. " + (q.explain || ""));
+    updateTop();
+  };
+}
+
+// ---------- Essay Domino: rebuild the model essay sentence by sentence ----------
+function chainPool(q) {
+  const later = []; let after = false;
+  S.qs.forEach(x => { if (x === q) after = true; if (after && x.type === "chain") x.steps.forEach(st => later.push({ t: st.t, why: "Not yet — this is the " + st.label + " of " + x.para + "." })); });
+  return later;
+}
+function chainUI(q) {
+  let step = 0, mistakes = 0;
+  const pool = chainPool(q);
+  const drawEssay = () => {
+    const done = S.built.map(p => '<div class="para ' + p.tone + '"><span class="pl">' + esc(p.para) + "</span>" + p.items.map(it => '<span class="fn">' + esc(it.label) + "</span>" + esc(it.t) + " ").join("") + "</div>").join("");
+    const cur = q.steps.slice(0, step).map(st => '<span class="fn">' + esc(st.label) + "</span>" + esc(st.t) + " ").join("");
+    const nxt = step < q.steps.length ? '<span class="slotnext">Next tile: <b>' + (step + 1) + ". " + esc(q.steps[step].label) + "</b> — " + esc(q.steps[step].hint) + "</span>" : "";
+    $("essay").innerHTML = done + '<div class="para ' + q.tone + ' now"><span class="pl">' + esc(q.para) + "</span>" + cur + nxt + "</div>";
+  };
+  const drawTiles = () => {
+    if (step >= q.steps.length) { $("tiles").innerHTML = ""; return; }
+    const right = { t: q.steps[step].t, ok: true };
+    const others = shuffle(pool.filter(p => p.t !== right.t && !q.steps.slice(0, step).some(st => st.t === p.t)).concat(q.traps || [])).slice(0, 2);
+    const opts = shuffle([right].concat(others));
+    $("tiles").innerHTML = opts.map((o, j) => '<button class="sent" data-j="' + j + '">' + esc(o.t) + "</button>").join("");
+    $("tiles").querySelectorAll(".sent").forEach(b => b.onclick = () => {
+      const o = opts[+b.dataset.j];
+      if (o.ok) {
+        step++; $("why").innerHTML = ""; drawEssay();
+        if (step < q.steps.length) drawTiles(); else finishChain();
+      } else {
+        mistakes++; b.classList.remove("wrong"); void b.offsetWidth; b.classList.add("wrong"); b.disabled = true;
+        $("why").innerHTML = '<p class="why">' + esc(o.why) + "</p>";
+      }
+    });
+  };
+  const finishChain = () => {
+    S.built.push({ para: q.para, tone: q.tone, items: q.steps.map(st => ({ label: st.label, t: st.t })) });
+    $("tiles").innerHTML = "";
+    grade(mistakes === 0, () => {}, mistakes === 0 ? "no wrong tiles" : mistakes + " wrong tile" + (mistakes > 1 ? "s" : ""), q.steps.map(st => st.label).join(" → "));
+  };
+  drawEssay(); drawTiles();
+}
+function gapsUI(q) {
+  const gaps = [...$("stage").querySelectorAll(".gap")], placed = Array(gaps.length).fill(null);
+  let sel = null;
+  const draw = () => {
+    gaps.forEach((g, j) => { g.textContent = placed[j] ? placed[j].t : ""; g.classList.toggle("on", !!placed[j]); g.classList.toggle("sel", sel === j); });
+    $("bank").innerHTML = q.tiles.filter(t => !placed.includes(t)).map(t => '<button data-k="' + t.k + '">' + esc(t.t) + "</button>").join("");
+    $("bank").querySelectorAll("button").forEach(b => b.onclick = () => {
+      const t = q.tiles.find(x => x.k === +b.dataset.k);
+      const j = sel !== null && !placed[sel] ? sel : placed.indexOf(null);
+      if (j < 0) return; placed[j] = t; sel = null; draw();
+    });
+    $("chk").classList.toggle("hidden", placed.includes(null));
+  };
+  gaps.forEach((g, j) => g.onclick = () => { if (g.dataset.done) return; if (placed[j]) { placed[j] = null; sel = j; } else sel = sel === j ? null : j; draw(); });
+  $("chk").onclick = () => {
+    const ok = placed.every((t, j) => t.t === q.ans[j]);
+    grade(ok, () => {
+      $("chk").remove(); $("bank").remove();
+      gaps.forEach((g, j) => { g.dataset.done = 1; const r = placed[j].t === q.ans[j]; g.classList.add(r ? "right" : "wrong"); if (!r) g.insertAdjacentHTML("afterend", '<span class="fix">→ ' + esc(q.ans[j]) + "</span>"); });
+    }, placed.map(t => t.t).join(" · "), q.ans.join(" · "));
+  };
+  draw();
+}
+const norm = t => t.toLowerCase().replace(/[’`]/g, "'").replace(/[.,;:!?]+$/g, "").replace(/\s+/g, " ").trim();
+function typeUI(q) {
+  const ans = [...q.text.matchAll(/\[\[(.+?)\]\]/g)].map(m => m[1].split("|"));
+  const ins = [...$("stage").querySelectorAll(".tin")];
+  ins.forEach((inp, j) => inp.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); (ins[j + 1] || $("chk")).focus(); } }));
+  $("chk").onclick = () => {
+    if (ins.some(inp => !inp.value.trim())) { const e = ins.find(inp => !inp.value.trim()); e.focus(); return; }
+    const res = ins.map((inp, j) => ans[j].some(a => norm(a) === norm(inp.value)));
+    grade(res.every(Boolean), () => {
+      $("chk").remove();
+      ins.forEach((inp, j) => { inp.readOnly = true; inp.classList.add(res[j] ? "right" : "wrong"); if (!res[j]) inp.insertAdjacentHTML("afterend", '<span class="fix">→ ' + esc(ans[j][0]) + "</span>"); });
+    }, ins.map(inp => inp.value.trim()).join(" · "), ans.map(a => a[0]).join(" · "));
+  };
+  setTimeout(() => ins[0] && ins[0].focus({ preventScroll: true }), 50);
+}
+function grade(ok, mark, given, correct) {
+  const q = S.qs[S.i];
+  mark();
+  S.res.push({ q: q.q, sec: q.sec, ok, given, correct });
+  if (ok) {
+    S.right++; S.streak++; S.best = Math.max(S.best, S.streak); S.pts += 10;
+    if (S.streak >= 3) { S.pts += 5; toast("🔥 Streak x" + S.streak + "  +5"); $("streak").classList.add("hot"); setTimeout(() => $("streak").classList.remove("hot"), 300); }
+  } else S.streak = 0;
+  updateTop();
+  feedback(ok, (ok ? "Spot on! " : "Not quite. ") + (q.explain || ""));
+}
+function feedback(ok, text) {
+  const last = S.i === S.qs.length - 1;
+  $("fb").innerHTML = '<div class="fb ' + (ok ? "ok" : "no") + '">' + AV() + '<div class="hand">' + esc(text) + "</div></div>" +
+    '<button class="btn next" id="nx">' + (last ? "Reach " + esc(DATA.stamp) + " 🏁" : "Next →") + "</button>";
+  $("nx").onclick = () => { if (last) finish(); else { S.i++; ask(true); scrollTo(0, 0); } };
+  $("nx").scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+function toast(t) { const d = document.createElement("div"); d.className = "toast"; d.textContent = t; document.body.appendChild(d); setTimeout(() => d.remove(), 1500); }
+
+// ---------- passport ----------
+function stampSVG(pct) {
+  const col = pct >= 86 ? "#1d3b8b" : pct >= 71 ? "#0e8a86" : pct >= 56 ? "#b86f00" : "#b8324a";
+  const ring = "STOP " + String(DATA.lesson).padStart(2, "0") + " · " + DATA.genre.toUpperCase() + " · SILK ROAD WRITERS · ";
+  return '<svg class="stamp" viewBox="0 0 200 200"><defs><path id="ring" d="M100 100 m-74 0 a74 74 0 1 1 148 0 a74 74 0 1 1 -148 0"/></defs>' +
+    '<g fill="none" stroke="' + col + '"><circle cx="100" cy="100" r="94" stroke-width="5"/><circle cx="100" cy="100" r="60" stroke-width="2.5"/></g>' +
+    '<text font-family="Nunito" font-weight="900" font-size="12" letter-spacing="1.4" fill="' + col + '"><textPath href="#ring">' + esc(ring) + "</textPath></text>" +
+    '<use href="#camel" x="78" y="58" width="44" height="33" style="color:' + col + '"/>' +
+    '<text x="100" y="112" text-anchor="middle" font-family="Fraunces, Georgia" font-weight="900" font-size="17" fill="' + col + '">' + esc(DATA.stamp.toUpperCase()) + "</text>" +
+    '<text x="100" y="142" text-anchor="middle" font-family="Fraunces, Georgia" font-weight="900" font-size="27" fill="' + col + '">' + pct + "%</text></svg>";
+}
+function finish() {
+  const key = "caravan-" + DATA.lesson + "-attempts";
+  const attempt = (parseInt(store(key) || "0", 10) || 0) + 1; store(key, String(attempt));
+  const pct = Math.round(100 * S.right / S.auto);
+  const bk = "caravan-" + DATA.lesson + "-best"; if (pct > (parseInt(store(bk) || "-1", 10))) store(bk, String(pct));
+  const band = pct >= 86 ? "Master Caravaneer" : pct >= 71 ? "Skilled Traveller" : pct >= 56 ? "Brave Explorer" : "Keep travelling!";
+  const mins = Math.max(1, Math.round((Date.now() - S.started) / 60000));
+  const bars = DATA.sections.map((s, si) => {
+    const r = S.res.filter(x => x.sec === si); if (!r.length) return "";
+    const ok = r.filter(x => x.ok).length;
+    return '<div class="r"><span>' + esc(s.title) + '</span><div class="b"><i style="width:' + (100 * ok / r.length) + '%"></i></div><span>' + ok + "/" + r.length + "</span></div>";
+  }).join("");
+  const w = S.writing.map(x => '<div class="mywrite"><small>' + esc(x.label) + ' · checklist ' + x.got + "/" + x.max + "</small>" + esc(x.text) + "</div>").join("");
+  $("passport").innerHTML = '<div class="head"><span>Silk Road Passport</span><span>Stop ' + DATA.lesson + "</span></div>" +
+    '<div class="stampwrap">' + stampSVG(pct) + "</div>" +
+    '<div class="who">' + esc($("name").value.trim()) + '</div><div class="grp">Group ' + esc($("group").value.trim()) + " · " + band + "</div>" +
+    '<div class="meta"><div>Correct<b>' + S.right + " / " + S.auto + "</b></div><div>Points<b>" + S.pts + "</b></div>" +
+    "<div>Best streak<b>🔥 " + S.best + "</b></div><div>Attempt<b>#" + attempt + " · " + mins + " min</b></div></div>" +
+    '<div class="bars" style="margin-top:12px">' + bars + "</div>" + w +
+    '<div class="grp" style="margin-top:10px">' + new Date().toLocaleString("en-GB") + "</div>" +
+    '<div class="shot">📸 Screenshot this passport and send it to your teacher</div>';
+  $("review").innerHTML = "<h2 class='serif' style='margin:0 0 6px;color:var(--deep)'>My answers</h2>" + S.res.map(x =>
+    '<div class="it' + (x.ok ? "" : " x") + '">' + esc(x.q) + "<br><b>" + esc(x.given || "—") + "</b>" + (x.ok ? "" : "<br>✓ " + esc(x.correct)) + "</div>").join("");
+  $("review").classList.add("hidden");
+  show("end");
+}
+$("showrev").onclick = () => $("review").classList.toggle("hidden");
+$("again").onclick = () => { build(); show("game"); drawRoute(); ask(); };
+</script>
+</body>
+</html>

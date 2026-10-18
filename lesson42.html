@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Caravan Challenge · Stop 42 · Online at Every Age</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,900;1,9..144,500&family=Nunito:wght@400;600;700;800;900&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --lapis: #1d3b8b; --deep: #13285f; --turq: #0e9f9a; --saffron: #f3a21b; --pome: #d1344b;
+          --sand: #fbf4e8; --clay: #eadcc5; --ink: #1c1b2e; --muted: #6b6478; --ok: #17a362; --okbg: #dff5e9; --badbg: #fde4e8; }
+  * { box-sizing: border-box; }
+  html { background: var(--sand); }
+  body { margin: 0; color: var(--ink); background: var(--sand); font: 17px/1.55 "Nunito", system-ui, -apple-system, "Segoe UI", Arial, sans-serif; }
+  .bg { position: fixed; inset: 0; width: 100%; height: 100%; opacity: .07; pointer-events: none; z-index: 0; }
+  main, .top { position: relative; z-index: 1; }
+  .wrap { max-width: 680px; margin: 0 auto; padding: 16px; }
+  h1, h2, .serif { font-family: "Fraunces", Georgia, serif; line-height: 1.08; }
+  .kicker { font-weight: 900; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--turq); }
+  .hand { font-family: "Caveat", cursive; font-size: 22px; line-height: 1.15; color: var(--lapis); }
+  .hidden { display: none !important; }
+  button { font: inherit; cursor: pointer; border: 0; color: inherit; }
+  .btn { display: block; width: 100%; background: var(--saffron); color: var(--ink); font-weight: 900; font-size: 18px; border-radius: 16px; padding: 15px 22px; box-shadow: 0 4px 0 #b97708; }
+  .btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #b97708; }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .btn.blue { background: var(--lapis); color: #fff; box-shadow: 0 4px 0 #0c1b44; }
+  .btn.ghost { background: #fff; box-shadow: none; border: 2px solid var(--clay); }
+
+  /* ---------- start (book opener) ---------- */
+  .hero { position: relative; margin: 6px 0 34px; }
+  .hero svg, .hero img { display: block; width: 100%; height: auto; aspect-ratio: 640 / 300; object-fit: cover; border-radius: 26px; box-shadow: 0 10px 0 rgba(29,59,139,.12); }
+  .hero .tag { position: absolute; left: -6px; bottom: -22px; background: var(--pome); color: #fff; font: 900 26px "Fraunces", Georgia, serif; padding: 8px 18px; border-radius: 12px; transform: rotate(-2deg); box-shadow: 0 5px 0 var(--deep); }
+  .route-mini { display: flex; gap: 3px; align-items: center; margin: 10px 0 14px; flex-wrap: wrap; }
+  .route-mini i { width: 5px; height: 5px; border-radius: 50%; background: var(--clay); }
+  .route-mini i.d { background: var(--turq); } .route-mini i.n { width: 12px; height: 12px; background: var(--pome); box-shadow: 0 0 0 4px rgba(209,52,75,.2); }
+  .route-mini span { flex-basis: 100%; font-size: 12px; font-weight: 800; color: var(--muted); margin-top: 4px; letter-spacing: .08em; }
+  .opener h1 { font-size: 48px; font-weight: 900; color: var(--deep); margin: 6px 0 4px; letter-spacing: -.01em; }
+  .opener .sub { font: italic 500 21px "Fraunces", Georgia, serif; color: var(--pome); }
+  .pen { display: flex; gap: 12px; align-items: flex-start; margin: 20px 0; }
+  .avatar { flex: none; width: 56px; height: 56px; border-radius: 50%; background: var(--lapis); color: var(--saffron); border: 4px solid var(--saffron); display: grid; place-items: center; font: 900 12px/1 "Fraunces", Georgia; text-align: center; }
+  .bubble { background: #fff; border: 2px solid var(--clay); border-radius: 16px; padding: 10px 16px; }
+  .card { background: #fff; border-radius: 22px; padding: 18px; border: 2px solid var(--clay); margin: 14px 0; }
+  .card label { display: block; font-weight: 800; margin: 8px 0 6px; color: var(--muted); font-size: 14px; }
+  .card input { width: 100%; padding: 13px 14px; border-radius: 12px; border: 2px solid var(--clay); background: var(--sand); font: inherit; color: var(--ink); }
+  .card input:focus, textarea:focus { outline: none; border-color: var(--saffron); }
+  .cities { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 6px; margin-top: 14px; text-align: center; }
+  .cities div { background: var(--sand); border-radius: 12px; padding: 8px 4px; font-size: 12px; font-weight: 800; color: var(--muted); line-height: 1.25; }
+  .cities b { display: block; font: 900 15px "Fraunces", Georgia; color: var(--deep); }
+
+  /* ---------- sticky route ---------- */
+  .top { position: sticky; top: 0; z-index: 5; background: rgba(251,244,232,.94); backdrop-filter: blur(6px); border-bottom: 2px solid var(--clay); }
+  .top .wrap { padding: 10px 16px 8px; }
+  .stats { display: flex; justify-content: space-between; align-items: center; font-weight: 900; }
+  .stats .pts { color: var(--pome); font: 900 22px "Fraunces", Georgia; }
+  .stats .cnt { color: var(--muted); font-size: 14px; }
+  .stats .streak { background: #fff; border: 2px solid var(--clay); border-radius: 99px; padding: 1px 12px; font-size: 15px; transition: transform .2s; }
+  .stats .streak.hot { transform: scale(1.18); border-color: var(--saffron); }
+  .route { position: relative; height: 46px; margin-top: 4px; }
+  .route .line, .route .fill { position: absolute; left: 12px; top: 33px; height: 5px; border-radius: 9px; }
+  .route .line { right: 12px; background: var(--clay); }
+  .route .fill { background: linear-gradient(90deg, var(--turq), var(--saffron)); transition: width .45s; }
+  .route .city { position: absolute; top: 28px; width: 15px; height: 15px; margin-left: -7px; border-radius: 50%; background: var(--sand); border: 3px solid var(--clay); }
+  .route .city.done { background: var(--saffron); border-color: var(--saffron); }
+  .route .rider { position: absolute; top: 0; width: 44px; height: 33px; margin-left: -24px; color: var(--saffron); transition: left .45s; filter: drop-shadow(0 2px 0 rgba(0,0,0,.15)); }
+  .route .rider.walk { animation: walk .45s ease; }
+  @keyframes walk { 30% { transform: translateY(-4px) rotate(-3deg); } 60% { transform: translateY(0) rotate(2deg); } }
+  .citynames { display: flex; justify-content: space-between; font-size: 10px; font-weight: 900; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-top: 2px; }
+
+  /* ---------- question card ---------- */
+  .move { display: flex; align-items: center; gap: 10px; margin: 8px 0 10px; }
+  .move .num { width: 38px; height: 38px; border-radius: 50%; background: var(--saffron); display: grid; place-items: center; font: 900 18px "Fraunces", Georgia; flex: none; }
+  .move h2 { font-size: 26px; color: var(--deep); margin: 0; }
+  .move small { margin-left: auto; font-weight: 900; font-size: 12px; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; }
+  .q { background: #fff; border-radius: 24px; padding: 20px; border-top: 7px solid var(--c, var(--turq)); box-shadow: 0 8px 0 rgba(29,59,139,.08); animation: pop .3s ease; }
+  @keyframes pop { from { transform: translateY(12px); opacity: 0; } to { transform: none; opacity: 1; } }
+  .q .kind { font-weight: 900; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--c, var(--turq)); }
+  .q .stem { font: 700 22px/1.28 "Fraunces", Georgia, serif; margin: 6px 0 16px; }
+  .opts { display: grid; gap: 10px; }
+  .opts.tf { grid-template-columns: repeat(3, 1fr); }
+  .opt { text-align: left; background: var(--sand); border: 2px solid var(--clay); border-radius: 14px; padding: 13px 14px; font-weight: 700; display: flex; gap: 10px; align-items: flex-start; transition: transform .1s, border-color .1s; }
+  .opts.tf .opt { justify-content: center; text-align: center; }
+  .opt:hover:not(:disabled) { border-color: var(--lapis); transform: translateY(-1px); }
+  .opt .k { flex: none; width: 27px; height: 27px; border-radius: 8px; background: var(--lapis); color: #fff; display: grid; place-items: center; font-size: 13px; font-weight: 900; }
+  .opt.right { background: var(--okbg); border-color: var(--ok); }
+  .opt.wrong { background: var(--badbg); border-color: var(--pome); animation: shake .35s; }
+  .opt:disabled { cursor: default; }
+  @keyframes shake { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+  .sent { display: block; width: 100%; text-align: left; background: var(--sand); border: 2px dashed var(--clay); border-radius: 12px; padding: 10px 12px; margin: 8px 0; font-weight: 600; }
+  .sent:hover:not(:disabled) { border-color: var(--lapis); border-style: solid; }
+  .sent.right { background: var(--okbg); border: 2px solid var(--ok); } .sent.wrong { background: var(--badbg); border: 2px solid var(--pome); }
+  .slots { display: grid; gap: 8px; margin-bottom: 12px; }
+  .slot { display: grid; grid-template-columns: 112px 1fr; gap: 10px; align-items: stretch; }
+  .slot .lab { background: var(--deep); color: var(--saffron); border-radius: 12px; display: grid; place-items: center; font-weight: 900; font-size: 12px; text-align: center; padding: 6px; word-break: break-word; }
+  .slot .fill { min-height: 48px; border: 2px dashed var(--clay); border-radius: 12px; padding: 8px 12px; font-weight: 600; background: var(--sand); }
+  .slot .fill.on { border-style: solid; border-color: var(--lapis); background: #eef2fb; cursor: pointer; }
+  .slot .fill.right { border-color: var(--ok); background: var(--okbg); } .slot .fill.wrong { border-color: var(--pome); background: var(--badbg); }
+  .tiles .sent { border-style: solid; background: #fff; }
+  textarea { width: 100%; min-height: 130px; border: 2px solid var(--clay); border-radius: 14px; padding: 12px; font: 600 17px/1.5 "Nunito", sans-serif; background: var(--sand); resize: vertical; }
+  .checks { list-style: none; padding: 0; margin: 10px 0; display: grid; gap: 6px; }
+  .checks li { background: var(--sand); border-radius: 10px; padding: 7px 12px; font-weight: 700; color: var(--muted); }
+  .checks li.on { background: var(--okbg); color: #0e6b40; }
+  .checks li::before { content: "○  "; } .checks li.on::before { content: "✓  "; }
+  .wc { font-weight: 800; font-size: 14px; color: var(--muted); text-align: right; }
+  .fb { margin-top: 14px; border-radius: 16px; padding: 12px 16px; display: flex; gap: 10px; align-items: flex-start; }
+  .fb.ok { background: var(--okbg); } .fb.no { background: var(--badbg); }
+  .fb .hand { font-size: 21px; } .fb.ok .hand { color: #0e6b40; } .fb.no .hand { color: #8f1d2e; }
+  .fb .avatar { width: 46px; height: 46px; border-width: 3px; font-size: 9px; }
+  .avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
+  .avatar.pic { background: #fff; }
+  .next { margin-top: 14px; }
+  .article { background: #fff; border-radius: 22px; padding: 4px 18px; margin-bottom: 14px; border: 2px solid var(--clay); }
+  .article summary { cursor: pointer; padding: 12px 0; font: 900 20px "Fraunces", Georgia; color: var(--deep); list-style: none; }
+  .article summary::after { content: "  ▾"; color: var(--turq); }
+  .article p { margin: 0 0 12px; font-size: 16px; }
+  .article .L { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 6px; background: var(--turq); color: #fff; font-weight: 900; font-size: 13px; margin-right: 6px; }
+  .toast { position: fixed; left: 50%; top: 110px; transform: translateX(-50%); background: var(--pome); color: #fff; font-weight: 900; padding: 8px 18px; border-radius: 99px; z-index: 9; animation: toast 1.4s forwards; }
+  @keyframes toast { 0% { opacity: 0; transform: translate(-50%, 10px); } 15%, 75% { opacity: 1; transform: translate(-50%, 0); } 100% { opacity: 0; } }
+
+  /* ---------- passport ---------- */
+  .passport { background: #fff; border-radius: 26px; padding: 22px 18px; position: relative; border: 2px solid var(--clay); }
+  .passport::after { content: ""; position: absolute; inset: 9px; border: 2px dashed var(--clay); border-radius: 18px; pointer-events: none; }
+  .passport .head { display: flex; justify-content: space-between; font-weight: 900; font-size: 12px; letter-spacing: .16em; color: var(--lapis); text-transform: uppercase; }
+  .stampwrap { display: flex; justify-content: center; margin: 8px 0 4px; }
+  .stamp { width: 200px; height: 200px; transform: rotate(-9deg); animation: stamp .55s cubic-bezier(.2,1.6,.4,1); }
+  @keyframes stamp { from { transform: rotate(-9deg) scale(2.3); opacity: 0; } to { transform: rotate(-9deg) scale(1); opacity: 1; } }
+  .who { text-align: center; font: 900 28px "Fraunces", Georgia; color: var(--deep); }
+  .grp { text-align: center; color: var(--muted); font-weight: 700; }
+  .meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+  .meta div { background: var(--sand); border-radius: 12px; padding: 8px 10px; font-size: 13px; color: var(--muted); font-weight: 700; }
+  .meta b { display: block; color: var(--ink); font-size: 17px; }
+  .bars .r { display: grid; grid-template-columns: 1fr 100px 40px; gap: 8px; align-items: center; font-size: 13px; font-weight: 800; margin: 6px 0; }
+  .bars .b { height: 9px; border-radius: 9px; background: var(--clay); overflow: hidden; }
+  .bars .b i { display: block; height: 100%; background: linear-gradient(90deg, var(--turq), var(--lapis)); }
+  .mywrite { background: var(--sand); border-left: 5px solid var(--saffron); border-radius: 0 12px 12px 0; padding: 8px 12px; margin-top: 12px; font-size: 15px; }
+  .mywrite small { display: block; font-weight: 900; color: var(--muted); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
+  .shot { text-align: center; font-weight: 900; color: var(--pome); margin-top: 12px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .review .it { border-left: 4px solid var(--ok); padding: 6px 10px; margin: 8px 0; background: var(--sand); border-radius: 0 10px 10px 0; font-size: 15px; }
+  .review .it.x { border-color: var(--pome); }
+  /* ---------- Essay Domino ---------- */
+  .essay { display: grid; gap: 8px; margin-bottom: 14px; }
+  .para { border-radius: 14px; padding: 10px 12px; font-size: 15px; line-height: 1.5; border: 2px solid transparent; }
+  .para.intro { background: #d7e6f7; } .para.body { background: #fdf0d3; } .para.opp { background: #d9f0ee; } .para.concl { background: #f5dde1; }
+  .para.now { border-color: var(--lapis); background-color: #fff; }
+  .para .pl { display: block; font-weight: 900; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--deep); margin-bottom: 2px; }
+  .para .fn { display: inline-block; font-weight: 900; font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: #fff; background: var(--lapis); border-radius: 6px; padding: 0 6px; margin-right: 4px; vertical-align: 1px; }
+  .para .slotnext { display: block; margin-top: 6px; border: 2px dashed var(--saffron); border-radius: 10px; padding: 6px 10px; font-weight: 800; color: var(--muted); }
+  .para .slotnext b { color: var(--pome); }
+  .tilebox .sent { border-style: solid; background: #fff; }
+  .tilebox .sent.wrong { animation: shake .35s; }
+  .why { font-family: "Caveat", cursive; font-size: 20px; color: #8f1d2e; margin: 4px 0 0; }
+  .gtext { font-size: 17px; line-height: 2.1; }
+  .gap { display: inline-block; min-width: 120px; min-height: 30px; vertical-align: middle; border: 2px dashed var(--clay); border-radius: 10px; padding: 1px 10px; margin: 0 2px; background: var(--sand); font-weight: 800; line-height: 1.5; text-align: center; }
+  .gap.sel { border-color: var(--saffron); border-style: solid; }
+  .gap.on { border-style: solid; border-color: var(--lapis); background: #eef2fb; }
+  .gap.right { border-color: var(--ok); background: var(--okbg); } .gap.wrong { border-color: var(--pome); background: var(--badbg); }
+  .bank { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+  .bank button { background: #fff; border: 2px solid var(--lapis); border-radius: 99px; padding: 6px 14px; font-weight: 800; }
+  .ttext { font-size: 18px; line-height: 2.2; }
+  .tin { font: 800 17px "Nunito", sans-serif; color: var(--lapis); border: 0; border-bottom: 3px solid var(--clay); background: var(--sand); border-radius: 6px 6px 0 0; padding: 2px 6px; margin: 0 2px; outline: none; }
+  .tin:focus { border-color: var(--saffron); }
+  .tin.right { border-color: var(--ok); background: var(--okbg); } .tin.wrong { border-color: var(--pome); background: var(--badbg); }
+  .fix { font-weight: 900; color: var(--ok); font-size: 15px; margin: 0 4px; }
+  @media (max-width: 440px) { .opts.tf { grid-template-columns: 1fr; } .opener h1 { font-size: 38px; } .q .stem { font-size: 20px; } .slot { grid-template-columns: 84px 1fr; } .hero .tag { font-size: 21px; } }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute">
+  <defs>
+    <!-- camel facing RIGHT (original flat silhouette) -->
+    <symbol id="camel" viewBox="0 0 64 48">
+      <path d="M8 22 Q6 26 6 31" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M9 24 Q9 15 16 14 Q20 6 26 12 Q30 7 35 13 Q40 16 40 22 L44 12 Q46 6 51 6 Q57 6 58 9 Q58 11 54 11 L51 12 L46 26 Q44 31 37 31 L14 31 Q9 30 9 24 Z" fill="currentColor"/>
+      <g fill="currentColor"><rect x="13" y="29" width="3.2" height="16" rx="1.5"/><rect x="18.5" y="29" width="3.2" height="16" rx="1.5"/><rect x="31" y="29" width="3.2" height="16" rx="1.5"/><rect x="36.5" y="29" width="3.2" height="16" rx="1.5"/></g>
+      <circle cx="53" cy="8.3" r="1.1" fill="#1c1b2e"/>
+    </symbol>
+    <pattern id="girih" width="40" height="40" patternUnits="userSpaceOnUse">
+      <g fill="none" stroke="#1d3b8b" stroke-width="1.2"><rect x="10" y="10" width="20" height="20"/><rect x="10" y="10" width="20" height="20" transform="rotate(45 20 20)"/><path d="M0 0 L10 10 M40 0 L30 10 M0 40 L10 30 M40 40 L30 30"/></g>
+    </pattern>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f9d9a6"/><stop offset="1" stop-color="#fbf0dc"/></linearGradient>
+    <!-- Silk Road scene: sun, Bukhara-style skyline, dunes, caravan -->
+    <symbol id="scene" viewBox="0 0 640 300">
+      <rect width="640" height="300" fill="url(#sky)"/>
+      <circle cx="505" cy="92" r="46" fill="#f6a91d" opacity=".9"/>
+      <g fill="#7f97c9" opacity=".55">
+        <rect x="60" y="120" width="26" height="110"/><path d="M56 120 h34 l-4 -12 h-26 z"/><rect x="66" y="96" width="14" height="12"/><path d="M64 96 q9 -16 18 0 z"/>
+        <path d="M120 230 v-62 q35 -46 70 0 v62 z"/><rect x="110" y="166" width="90" height="64"/>
+        <path d="M230 230 v-70 h110 v70 z"/><path d="M260 230 v-46 q25 -28 50 0 v46 z" fill="#5f79b5"/>
+        <path d="M352 230 v-40 q30 -50 60 0 v40 z"/>
+      </g>
+      <g fill="#1d3b8b">
+        <path d="M150 196 q38 -56 76 0 z" fill="#12b3ad"/><rect x="146" y="194" width="84" height="8" fill="#f6a91d"/>
+        <rect x="140" y="202" width="96" height="66"/>
+        <path d="M170 268 v-34 q18 -24 36 0 v34 z" fill="#101f4d"/>
+        <rect x="248" y="140" width="20" height="128"/><path d="M244 140 h28 l-3 -10 h-22 z" fill="#d1344b"/><rect x="252" y="122" width="12" height="8"/><path d="M250 122 q8 -14 16 0 z" fill="#12b3ad"/>
+      </g>
+      <path d="M0 262 Q120 236 240 258 T480 252 T640 246 V300 H0 Z" fill="#eccf9c"/>
+      <path d="M0 280 Q160 258 320 278 T640 270 V300 H0 Z" fill="#e2b979"/>
+      <g color="#7a4a1c">
+        <use href="#camel" x="330" y="220" width="64" height="48"/>
+        <use href="#camel" x="392" y="214" width="70" height="52"/>
+        <use href="#camel" x="460" y="208" width="78" height="58"/>
+      </g>
+      <path d="M352 232 L398 228 M420 226 L466 220" stroke="#7a4a1c" stroke-width="1.5"/>
+    </symbol>
+  </defs>
+</svg>
+
+<svg class="bg"><rect width="100%" height="100%" fill="url(#girih)"/></svg>
+
+<main id="start" class="wrap opener">
+  <div class="route-mini" id="routeMini"></div>
+  <div class="hero" id="hero"></div>
+  <div class="kicker">Caravan Challenge · The Results Section</div>
+  <h1>Online at Every Age</h1>
+  <div class="sub">Internet Use by Age Group</div>
+  <div class="pen"><div class="avatar">PROF<br>PEN</div><div class="bubble hand">Six cities. One stamp. Read, think, build and write — then show me what you’ve got!</div></div>
+  <div class="card">
+    <label for="name">Your full name</label><input id="name" autocomplete="name" placeholder="e.g. Aziza Karimova">
+    <label for="group">Group</label><input id="group" placeholder="e.g. 201">
+    <div class="cities" id="cityList"></div>
+  </div>
+  <button class="btn" id="go" disabled>Start the journey</button>
+</main>
+
+<div id="game" class="hidden">
+  <div class="top"><div class="wrap">
+    <div class="stats"><span class="pts" id="pts">0 pts</span><span class="cnt" id="cnt"></span><span class="streak" id="streak">🔥 0</span></div>
+    <div class="route" id="route"><div class="line"></div><div class="fill" id="fill"></div><svg class="rider" id="rider"><use href="#camel"/></svg></div>
+    <div class="citynames" id="cityNames"></div>
+  </div></div>
+  <main class="wrap" id="stage"></main>
+</div>
+
+<main id="end" class="wrap hidden">
+  <div class="passport" id="passport"></div>
+  <div class="row2"><button class="btn ghost" id="again">Play again</button><button class="btn blue" id="showrev">My answers</button></div>
+  <div class="card review hidden" id="review"></div>
+</main>
+
+<script>
+const DATA = {"lesson": 42, "unit": 18, "module": 4, "title": "Online at Every Age", "genre": "The Results Section", "theme": "Internet Use by Age Group", "level": "C1", "stamp": "Tashkent", "heroTag": "What do the numbers say?", "hero": "img/L42_hero.jpg", "note": "Conventions: 'mcq' options[0] is correct (shuffled in the browser); 'order' items are listed in the correct order (shuffled in the browser); 'pick' and 'tfng' use an explicit answer; 'write' is scored by its checklist. 'chain' steps are in the correct order (Essay Domino); 'gaps' and 'type' mark answers with [[…]] in the text, alternatives separated by |. Transfer rule: the quiz never repeats the book's texts or exercises - same words, grammar and genre, new texts and tasks (the Essay Domino text is a new C1 results section on new invented data). ALL numbers in this quiz are invented example data for practice, not real statistics.", "sections": [{"id": "words", "title": "Word Bazaar", "shuffle": true, "questions": [{"type": "mcq", "q": "In the survey, 512 ______ answered all the questions.", "options": ["respondents", "trends", "peaks", "proportions"], "explain": "respondent = a person who answers a survey."}, {"type": "mcq", "q": "Prices ______ all year: up in March, down in May and up again in July.", "options": ["fluctuated", "peaked", "declined", "doubled"], "explain": "fluctuate = go up and down again and again."}, {"type": "mcq", "q": "Smartphone use reached a ______ in 2023 and then fell slightly.", "options": ["peak", "trend", "decline", "majority"], "explain": "reach a peak = reach the highest point."}, {"type": "mcq", "q": "The ______ divide means that some villages still have no fast internet.", "options": ["digital", "steady", "sharp", "upward"], "explain": "the digital divide = the gap between people with and without internet access."}, {"type": "mcq", "q": "From 20% to 25% is a rise of five percentage ______.", "options": ["points", "percents", "levels", "parts"], "explain": "The difference between two percentages is measured in percentage points."}]}, {"id": "read", "title": "Read like a detective", "shuffle": false, "passageTitle": "Who Learns Online? (Results)", "passage": ["This is the results section of a FICTIONAL study. All numbers are INVENTED example data for practice, not real statistics.", "Table A. Respondents who completed at least one online course in the past year (%) — 16–24: 2021 = 34, 2024 = 46 · 25–39: 2021 = 28, 2024 = 39 · 40–59: 2021 = 11, 2024 = 18 · 60+: 2021 = 3, 2024 = 4.", "A  Table A shows the percentage of respondents in each age group who completed at least one online course in the previous twelve months. The survey was carried out twice, with a new sample of about 500 adults each time. Overall, online learning became more common between 2021 and 2024 in every age group except the oldest, where the figure remained almost unchanged.", "B  The highest levels were recorded among the youngest respondents. In 2021, about a third (34%) of 16–24-year-olds had completed an online course, and by 2024 this proportion had risen to almost half (46%). The 25–39 group showed a similar pattern, with an increase of 11 percentage points, from 28% to 39%.", "C  Among respondents aged 40–59, online learning was far less common, but it still grew considerably, from 11% to 18%. In contrast, the figure for the oldest group rose only slightly, from 3% to 4%, so in 2024 the youngest respondents were more than ten times as likely to learn online as those aged 60 and over.", "D  The most popular subjects also differed by age. Younger respondents mainly chose languages and IT skills, while those aged 40–59 most often mentioned courses connected with their jobs. The few older learners usually took short courses on using smartphones safely. Many of them said that a grandchild had helped them to register, which suggests that families may play a key role in older people's learning."], "questions": [{"type": "mcq", "q": "Choose the best heading for paragraph C.", "options": ["Slow growth in the older groups", "The most popular subjects", "Young people lead the way", "How the survey was carried out twice"], "explain": "C describes the 40–59 and 60+ groups."}, {"type": "mcq", "q": "Choose the best heading for paragraph D.", "options": ["What people chose to study", "Young people lead the way", "Slow growth in the older groups", "Why the survey was repeated"], "explain": "D compares the subjects chosen by each age group."}, {"type": "tfng", "q": "In 2024, almost half of the 16–24-year-olds completed an online course.", "answer": "T", "explain": "B: almost half (46%)."}, {"type": "tfng", "q": "Online learning in the 60+ group fell between 2021 and 2024.", "answer": "F", "explain": "C: it rose slightly, from 3% to 4%."}, {"type": "tfng", "q": "Women were more likely to learn online than men.", "answer": "NG", "explain": "The text gives no results by gender."}, {"type": "tfng", "q": "The figure for the 25–39 group rose by 11 percentage points.", "answer": "T", "explain": "B: from 28% to 39%."}, {"type": "tfng", "q": "Respondents aged 40–59 mostly chose language courses.", "answer": "F", "explain": "D: they most often mentioned courses connected with their jobs."}, {"type": "pick", "q": "Paragraph B. Tap the sentence that gives the change for the 25–39 group.", "text": ["The highest levels were recorded among the youngest respondents.", "In 2021, about a third (34%) of 16–24-year-olds had completed an online course, and by 2024 this proportion had risen to almost half (46%).", "The 25–39 group showed a similar pattern, with an increase of 11 percentage points, from 28% to 39%."], "answer": 2, "explain": "from 28% to 39% = an increase of 11 percentage points."}, {"type": "pick", "q": "Paragraph D. Tap the sentence that goes beyond the data and starts to EXPLAIN (it belongs in the discussion).", "text": ["The most popular subjects also differed by age.", "Younger respondents mainly chose languages and IT skills, while those aged 40–59 most often mentioned courses connected with their jobs.", "The few older learners usually took short courses on using smartphones safely.", "Many of them said that a grandchild had helped them to register, which suggests that families may play a key role in older people's learning."], "answer": 3, "explain": "'which suggests that … may' is interpretation: the lantern, not a window. In a real results section, move it to the discussion."}, {"type": "mcq", "q": "Which age group showed the smallest increase?", "options": ["60+", "16–24", "25–39", "40–59"], "explain": "60+: only one percentage point (3% → 4%)."}]}, {"id": "tools", "title": "Language toolkit", "shuffle": true, "questions": [{"type": "mcq", "q": "The number of online learners ______ sharply between 2021 and 2024.", "options": ["rose", "raised", "rised", "was risen"], "explain": "rise – rose – risen (no object)."}, {"type": "mcq", "q": "There was a ______ fall in the number of users in 2023.", "options": ["slight", "slightly", "slighter", "slightest"], "explain": "Adjective + noun: a slight fall."}, {"type": "mcq", "q": "The majority of older respondents ______ still not daily users in 2024.", "options": ["were", "was", "has been", "is"], "explain": "the majority of + plural noun → plural verb."}, {"type": "mcq", "q": "Choose the best nominalised version: “Mobile banking use rose sharply among older respondents.”", "options": ["There was a sharp rise in mobile banking use among older respondents.", "There was a sharply rise of mobile banking use by older respondents.", "Mobile banking use had a sharp rising among the older respondents.", "A rising sharply was in the mobile banking use of older respondents."], "explain": "rose sharply (verb + adverb) → a sharp rise in … (adjective + noun): the change becomes the subject."}, {"type": "mcq", "q": "Students spent 4.8 hours online a day, ______ their teachers spent 2.1 hours.", "options": ["whereas", "despite", "because of", "in spite"], "explain": "whereas compares two groups in one sentence."}, {"type": "mcq", "q": "In a survey, 26% of respondents read e-books every month. Which phrase matches the number?", "options": ["just over a quarter", "almost a third", "the vast majority", "just under a fifth"], "explain": "A quarter = 25%, so 26% is just over a quarter."}, {"type": "mcq", "q": "Which sentence is right for a RESULTS section?", "options": ["In 2024, 64% of respondents used a tablet every week.", "It may perhaps be that 64% of respondents used tablets.", "Tablets were popular because 64% of people like them.", "Possibly 64% of the respondents might use a tablet weekly."], "explain": "A number you counted is a fact: report it plainly. Hedges and reasons belong in the discussion."}]}, {"id": "blueprint", "title": "The Blueprint", "shuffle": false, "questions": [{"type": "order", "q": "Rebuild the formula! Put each step into the right window of the minaret.", "items": ["Name the table or figure and say what it presents", "Give the main trend first: Overall, …", "Select the key figures: highest, lowest, sharpest change", "Compare groups: whereas · by far · twice as … as", "Note what does not fit: The only exception was …"], "labels": ["1 · Point", "2 · Big picture", "3 · Key numbers", "4 · Compare", "5 · Exceptions"], "explain": "This is the whole formula of a results paragraph. It works for every table and chart."}, {"type": "order", "q": "Open the windows in order: a results paragraph about students in four faculties (invented data).", "items": ["Table B shows the average time online per day of students in four faculties.", "Overall, students in all four faculties spent more than four hours a day online.", "IT students spent the most time online (7.2 hours), while history students spent the least (4.1 hours).", "Language students spent almost as much time online as IT students (6.8 hours).", "The only exception to the weekday pattern was the medical faculty, whose students went online more at weekends."], "labels": ["1 · Point", "2 · Big picture", "3 · Key numbers", "4 · Compare", "5 · Exceptions"], "explain": "Point → big picture → key numbers → compare → exceptions."}, {"type": "mcq", "q": "Which sentence belongs in the lantern (the discussion), not in the windows?", "options": ["This may be because IT students study mostly on computers.", "IT students spent the most time online, at 7.2 hours.", "Table B shows the average time online per day.", "Overall, all four groups spent over four hours online."], "explain": "'This may be because …' explains the result."}, {"type": "mcq", "q": "What should come FIRST in a results paragraph?", "options": ["A pointer to the table or figure", "The most surprising number in the data", "A reason for the main trend in the data", "A link to earlier studies on the topic"], "explain": "Window 1: tell the reader where to look."}, {"type": "mcq", "q": "A writer reports: 'Daily use rose from 40% to 60%.' Which is also true?", "options": ["It rose by 20 percentage points.", "It rose by 20 per cent.", "It doubled.", "It rose by 60 percentage points."], "explain": "60 − 40 = 20 percentage points (but a 50% increase)."}, {"type": "mcq", "q": "'Just under a third' is closest to …", "options": ["31%", "35%", "13%", "3%"], "explain": "A third ≈ 33%; just under = a little less."}]}, {"id": "domino", "title": "Essay Domino", "shuffle": false, "questions": [{"type": "chain", "para": "Windows 1–2", "tone": "intro", "q": "Build WINDOWS 1–2 of a C1 results section: “Figure 4 (invented data): respondents who shopped online at least once a month, by age group, 2020–2024. Write the results.” Tap the tile that comes next.", "steps": [{"label": "Point", "hint": "tell the reader where to look", "t": "Figure 4 presents the proportion of respondents in each age group who shopped online at least once a month between 2020 and 2024."}, {"label": "Big picture", "hint": "the main trend first", "t": "Overall, monthly online shopping became more widespread in every age group, although the pace of growth varied markedly with age."}], "traps": [{"t": "Online shopping is more and more popular because it is so convenient.", "why": "A reason with “because” belongs in the discussion, not in the results."}, {"t": "As you can see, the figure shows lots of interesting things.", "why": "Vague and informal: a pointer says exactly what the figure presents."}], "explain": "Point → Big picture."}, {"type": "chain", "para": "Window 3", "tone": "body", "q": "Open WINDOW 3: the key numbers. Tap the tile that comes next.", "steps": [{"label": "Highest level", "hint": "the group at the top", "t": "The highest level was recorded among 25–39-year-olds, whose share of monthly online shoppers rose from 62% to 80%."}, {"label": "Second figure", "hint": "a similar pattern", "t": "The youngest group followed a similar but flatter path, climbing from 58% to 71%."}, {"label": "Sharpest change", "hint": "the biggest rise", "t": "The sharpest rise, however, occurred in the 40–59 group, where the figure increased by 24 percentage points, from just under a third (31%) to 55%."}], "traps": [{"t": "The 40–59 group's online shopping rose on 24 percents.", "why": "Two errors: we say “by”, not “on”, and “percentage points”, not “percents”."}], "explain": "Key numbers: the highest, a second figure, the sharpest change."}, {"type": "chain", "para": "Window 4", "tone": "body", "q": "Open WINDOW 4: compare. Tap the tile that comes next.", "steps": [{"label": "Change of order", "hint": "compare the start and the end", "t": "Whereas in 2020 the youngest respondents were the most frequent online shoppers, by 2024 they had been overtaken by the 25–39 group."}, {"label": "Gap", "hint": "the difference that remained", "t": "The disparity between the oldest and the youngest groups nevertheless remained wide: in 2024, those aged 16–24 were almost four times as likely to shop online each month as respondents aged 60 and over."}], "traps": [{"t": "Young people are simply better with technology than old people.", "why": "This is a judgement about people, not a comparison of the data."}], "explain": "Compare: whereas · almost four times as likely as."}, {"type": "chain", "para": "Window 5", "tone": "opp", "q": "Open WINDOW 5: the exceptions. Tap the tile that comes next.", "steps": [{"label": "Exception", "hint": "what does not fit the trend", "t": "The only exception to this steady growth was the 16–24 group, whose figure fell marginally in 2023 before recovering the following year."}, {"label": "Qualification", "hint": "Even so, …", "t": "Even so, respondents aged 60 and over remained a small minority of monthly online shoppers throughout the period (19% in 2024)."}], "traps": [{"t": "This may be because students had less money in 2023.", "why": "A possible reason: save it for the discussion (the lantern)."}], "explain": "Exceptions: The only exception was … · Even so, …"}, {"type": "chain", "para": "Summary of findings", "tone": "concl", "q": "Close the section with a SUMMARY OF FINDINGS. Tap the tile that comes next.", "steps": [{"label": "Opening", "hint": "announce the findings", "t": "In summary, two main findings emerged."}, {"label": "Finding 1", "hint": "the growth", "t": "First, monthly online shopping grew in all four age groups, most strongly among respondents aged 40–59."}, {"label": "Finding 2", "hint": "the gap", "t": "Second, a marked disparity between the youngest and the oldest respondents persisted despite this growth."}, {"label": "Signpost", "hint": "where the meaning is discussed", "t": "These findings are discussed in Section 4."}], "traps": [{"t": "In conclusion, online shopping is clearly the future of trade.", "why": "A summary of findings adds no opinions or predictions."}, {"t": "Third, prices in online shops were lower than in the bazaar.", "why": "A new finding that the figure does not show: never add new data in the summary."}], "explain": "Summary: Opening → findings → signpost to the discussion."}, {"type": "gaps", "q": "Fill the mortar. Tap a tile, then a gap. Three tiles are extra.", "text": "[[Overall]], monthly online shopping became more widespread in every age group. The sharpest rise, [[however]], occurred in the 40–59 group. [[Whereas]] in 2020 the youngest respondents shopped online most often, by 2024 they had been overtaken. [[Even so]], the oldest group remained a small minority. [[In summary]], two main findings emerged.", "extra": ["Such as", "Despite", "Because of"], "explain": "These C1 links are the mortar that holds the windows together."}, {"type": "type", "q": "Write it from memory. The first letters will help you.", "text": "The sharpest rise was [[recorded]] among respondents aged 40–59.", "explain": "was recorded = a formal way to report a result."}, {"type": "type", "q": "Write it from memory. The first letters will help you.", "text": "[[Whereas]] the youngest group shopped online most often in 2020, by 2024 it had been [[overtaken]].", "explain": "Whereas … = a C1 way to compare two groups or two moments in one sentence."}, {"type": "type", "q": "Write it from memory. The first letters will help you.", "text": "The [[disparity]] between the oldest and the youngest groups remained wide.", "explain": "disparity = a large difference between groups."}, {"type": "type", "q": "Write it from memory. The first letters will help you.", "text": "[[Even so]], the oldest group remained a small [[minority]].", "explain": "Even so = in spite of what was just said; a small minority = a small part of a group."}]}, {"id": "write", "title": "Write it", "shuffle": false, "questions": [{"type": "mcq", "q": "Headline: “ONLINE LEARNING EXPLODES AMONG THE YOUNG!” Choose the best data sentence (Table A).", "options": ["The share of 16–24-year-olds who learned online rose from 34% to 46%.", "Online learning among young people exploded, from 34% to 46%!", "Everyone young is learning online now, from 34% to 46%.", "Young people love online learning because it is very modern."], "explain": "Calm, exact, no exaggeration and no explanation."}, {"type": "mcq", "q": "Which sentence REPORTS a result without explaining it?", "options": ["Most respondents aged 40–59 chose job-related courses.", "Older people probably prefer short, practical courses.", "This is because younger people have more free time.", "Families may play a key role in older people's learning."], "explain": "The others guess at reasons: they belong in the discussion."}, {"type": "write", "q": "Your turn! Look at Table A. Write TWO sentences for a results section: one big-picture sentence and one sentence with a key number.", "minWords": 20, "maxWords": 60, "checks": [{"label": "Points to the data or gives the big picture", "any": ["table", "figure", "overall", "in general"]}, {"label": "Uses data language", "any": ["rose", "increased", "fell", "decreased", "declined", "remained", "doubled", "peak", "sharp", "steadi", "steady", "slight", "majority", "half", "third", "quarter", "percentage point"]}, {"label": "Gives a number", "any": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]}, {"label": "Reports, does not explain (no “because”)", "none": ["because"]}, {"label": "No contractions (don't, it's …)", "none": ["n't", "n’t", "it's", "it’s", "that's", "that’s", "i'm", "i’m", "they're", "they’re", "we're", "we’re", "you're", "you’re", "there's", "there’s", "what's", "what’s"]}], "explain": "Your sentences appear in your passport so your teacher can read them.", "label": "My data sentences"}, {"type": "write", "label": "My comparison window", "q": "Your turn! Write WINDOW 4 for Table A: compare two age groups in 2024 in one or two sentences. Use a comparison phrase and give the numbers.", "minWords": 15, "maxWords": 60, "checks": [{"label": "Compares two groups", "any": ["whereas", "while", "compared with", "in contrast", "times as", "by far", "less than", "more than"]}, {"label": "Names an age group", "any": ["16–24", "16-24", "25–39", "25-39", "40–59", "40-59", "60+", "60 and over", "youngest", "oldest"]}, {"label": "Gives a number", "any": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]}, {"label": "Reports, does not explain (no “because”)", "none": ["because"]}, {"label": "No contractions (don't, it's …)", "none": ["n't", "n’t", "it's", "it’s", "that's", "that’s", "i'm", "i’m", "they're", "they’re", "we're", "we’re", "you're", "you’re", "there's", "there’s", "what's", "what’s"]}], "explain": "Your sentences appear in your passport so your teacher can read them."}]}], "avatar": "img/ProfPen_avatar.png"};
+const CITIES = ["Samarkand", "Bukhara", "Khiva", "Shahrisabz", "Termez", "Kokand", "Margilan"];
+const COLORS = ["var(--turq)", "var(--saffron)", "var(--pome)", "var(--lapis)", "var(--turq)", "var(--saffron)"];
+const KIND = { mcq: "Choose the answer", tfng: "True, False or Not Given?", pick: "Find it in the text", order: "Put in order", write: "Write", chain: "Essay domino", gaps: "Fill the mortar", type: "Write it from memory" };
+const TFNG = [["T", "True"], ["F", "False"], ["NG", "Not Given"]];
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+function rnd(n) { try { const a = new Uint32Array(1); crypto.getRandomValues(a); return a[0] % n; } catch (e) { return Math.floor(Math.random() * n); } }
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rnd(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
+const AV = () => DATA.avatar ? '<div class="avatar pic"><img src="' + esc(DATA.avatar) + '" alt="Prof. Pen"></div>' : '<div class="avatar">PROF<br>PEN</div>';
+const words = t => (t.trim().match(/[A-Za-z’'-]+/g) || []).length;
+
+// ---------- opener ----------
+(function opener() {
+  let m = ""; for (let i = 1; i <= 45; i++) m += "<i class='" + (i < DATA.lesson ? "d" : i === DATA.lesson ? "n" : "") + "'></i>";
+  $("routeMini").innerHTML = m + "<span>STOP " + DATA.lesson + " OF 45</span>";
+  $("hero").innerHTML = (DATA.hero ? '<img src="' + esc(DATA.hero) + '" alt="">' : '<svg viewBox="0 0 640 300"><use href="#scene"/></svg>') +
+    (DATA.heroTag ? '<div class="tag">' + esc(DATA.heroTag) + "</div>" : "");
+  if (DATA.avatar) document.querySelectorAll(".pen .avatar").forEach(a => a.outerHTML = AV());
+  $("cityList").innerHTML = DATA.sections.map((s, i) => "<div><b>" + CITIES[i] + "</b>" + esc(s.title) + "</div>").join("");
+})();
+const ready = () => { $("go").disabled = !($("name").value.trim().length > 2 && $("group").value.trim()); };
+$("name").oninput = ready; $("group").oninput = ready;
+$("go").onclick = () => { build(); show("game"); drawRoute(); ask(); };
+function show(id) { ["start", "game", "end"].forEach(x => $(x).classList.toggle("hidden", x !== id)); scrollTo(0, 0); }
+
+// ---------- state ----------
+let S;
+function build() {
+  const qs = [];
+  DATA.sections.forEach((s, si) => {
+    let list = s.questions.map(q => {
+      if (q.type === "mcq") return { ...q, sec: si, opts: shuffle(q.options.map((t, j) => ({ k: "o" + j, t }))), correct: "o0" };
+      if (q.type === "tfng") return { ...q, sec: si, opts: TFNG.map(([k, t]) => ({ k, t })), correct: q.answer };
+      if (q.type === "order") { let o = shuffle(q.items.map((t, j) => ({ k: j, t }))); while (o.length > 1 && o.every((x, j) => x.k === j)) o = shuffle(o); return { ...q, sec: si, tiles: o }; }
+      if (q.type === "gaps") { const ans = [...q.text.matchAll(/\[\[(.+?)\]\]/g)].map(m => m[1]); return { ...q, sec: si, ans, tiles: shuffle(ans.concat(q.extra || []).map((t, j) => ({ k: j, t }))) }; }
+      return { ...q, sec: si };
+    });
+    if (s.shuffle) list = shuffle(list);
+    qs.push(...list);
+  });
+  S = { qs, i: 0, pts: 0, streak: 0, best: 0, right: 0, auto: qs.filter(q => q.type !== "write").length, res: [], writing: [], started: Date.now(), built: [] };
+}
+
+// ---------- route ----------
+function drawRoute() {
+  const n = DATA.sections.length;
+  $("route").querySelectorAll(".city").forEach(e => e.remove());
+  for (let k = 0; k < n; k++) {
+    const d = document.createElement("div"); d.className = "city"; d.id = "c" + k;
+    d.style.left = "calc(12px + (100% - 24px) * " + (k / (n - 1)) + ")"; $("route").appendChild(d);
+  }
+  $("cityNames").innerHTML = DATA.sections.map((s, i) => "<span>" + CITIES[i] + "</span>").join("");
+}
+function updateTop(walk) {
+  const total = S.qs.length, f = Math.min(S.i / (total - 1 || 1), 1);
+  $("fill").style.width = "calc((100% - 24px) * " + f + ")";
+  $("rider").style.left = "calc(12px + (100% - 24px) * " + f + ")";
+  if (walk) { $("rider").classList.remove("walk"); void $("rider").offsetWidth; $("rider").classList.add("walk"); }
+  const sec = S.qs[S.i].sec;
+  for (let k = 0; k < DATA.sections.length; k++) $("c" + k).classList.toggle("done", k <= sec);
+  $("pts").textContent = S.pts + " pts";
+  $("cnt").textContent = (S.i + 1) + " / " + total;
+  $("streak").textContent = "🔥 " + S.streak;
+}
+
+// ---------- questions ----------
+function ask(walk) {
+  updateTop(walk);
+  const q = S.qs[S.i], s = DATA.sections[q.sec];
+  const first = S.qs.findIndex(x => x.sec === q.sec) === S.i;
+  let h = '<div class="move"><div class="num">' + (q.sec + 1) + '</div><h2>' + esc(s.title) + "</h2><small>" + CITIES[q.sec] + "</small></div>";
+  if (s.passage) h += '<details class="article"' + (first ? " open" : "") + "><summary>📜 " + esc(s.passageTitle) + "</summary>" +
+    s.passage.map(p => { const m = p.match(/^([A-G])\s+(.*)$/); return "<p>" + (m ? '<span class="L">' + m[1] + "</span>" + esc(m[2]) : esc(p)) + "</p>"; }).join("") + "</details>";
+  h += '<div class="q" style="--c:' + COLORS[q.sec] + '"><div class="kind">' + KIND[q.type] + '</div><div class="stem">' + esc(q.q) + "</div>";
+  if (q.type === "mcq" || q.type === "tfng") {
+    h += '<div class="opts' + (q.type === "tfng" ? " tf" : "") + '">' + q.opts.map((o, j) =>
+      '<button class="opt" data-k="' + o.k + '">' + (q.type === "tfng" ? "" : '<span class="k">' + "ABCD"[j] + "</span>") + "<span>" + esc(o.t) + "</span></button>").join("") + "</div>";
+  } else if (q.type === "pick") {
+    h += q.text.map((t, j) => '<button class="sent" data-j="' + j + '">' + esc(t) + "</button>").join("");
+  } else if (q.type === "order") {
+    h += '<div class="slots">' + q.labels.map((l, j) => '<div class="slot"><div class="lab">' + esc(l) + '</div><div class="fill" data-slot="' + j + '"></div></div>').join("") + "</div>";
+    h += '<div class="tiles" id="tiles"></div><button class="btn blue hidden" id="chk">Check my order</button>';
+  } else if (q.type === "chain") {
+    h += '<div class="essay" id="essay"></div><div class="tilebox" id="tiles"></div><div id="why"></div>';
+  } else if (q.type === "gaps") {
+    let n = 0; h += '<div class="gtext">' + q.text.split(/\[\[.+?\]\]/).map((part, j, a) => esc(part) + (j < a.length - 1 ? '<button class="gap" data-g="' + (n++) + '"></button>' : "")).join("") + '</div><div class="bank" id="bank"></div><button class="btn blue hidden" id="chk">Check the mortar</button>';
+  } else if (q.type === "type") {
+    let n = 0; h += '<div class="ttext">' + q.text.split(/\[\[.+?\]\]/).map((part, j, a) => {
+      if (j === a.length - 1) return esc(part);
+      const ans = q.text.match(/\[\[(.+?)\]\]/g)[j].slice(2, -2).split("|")[0];
+      const hint = ans.split(" ").map(w => w[0] + "…").join(" ");
+      return esc(part) + '<input class="tin" data-t="' + (n++) + '" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="' + esc(hint) + '" style="width:' + Math.max(70, ans.length * 11 + 24) + 'px">';
+    }).join("") + '</div><button class="btn blue" id="chk" style="margin-top:12px">Check my words</button>';
+  } else if (q.type === "write") {
+    h += '<textarea id="ta" placeholder="Start typing here…"></textarea><div class="wc" id="wc">0 words</div>' +
+      '<ul class="checks" id="cl">' + q.checks.map(c => "<li>" + esc(c.label) + "</li>").join("") + '<li id="len">' + q.minWords + "–" + q.maxWords + " words</li></ul>" +
+      '<button class="btn blue" id="sub" disabled>Submit</button>';
+  }
+  h += '<div id="fb"></div></div>';
+  $("stage").innerHTML = h;
+  if (q.type === "mcq" || q.type === "tfng") $("stage").querySelectorAll(".opt").forEach(b => b.onclick = () => grade(b.dataset.k === q.correct, () => {
+    $("stage").querySelectorAll(".opt").forEach(x => { x.disabled = true; if (x.dataset.k === q.correct) x.classList.add("right"); else if (x === b) x.classList.add("wrong"); });
+  }, (q.opts.find(o => o.k === b.dataset.k) || {}).t, (q.opts.find(o => o.k === q.correct) || {}).t));
+  if (q.type === "pick") $("stage").querySelectorAll(".sent").forEach(b => b.onclick = () => grade(+b.dataset.j === q.answer, () => {
+    $("stage").querySelectorAll(".sent").forEach(x => { x.disabled = true; if (+x.dataset.j === q.answer) x.classList.add("right"); else if (x === b) x.classList.add("wrong"); });
+  }, b.textContent, q.text[q.answer]));
+  if (q.type === "order") orderUI(q);
+  if (q.type === "chain") chainUI(q);
+  if (q.type === "gaps") gapsUI(q);
+  if (q.type === "type") typeUI(q);
+  if (q.type === "write") writeUI(q);
+}
+function orderUI(q) {
+  const placed = Array(q.items.length).fill(null);
+  const draw = () => {
+    $("stage").querySelectorAll(".fill").forEach((f, j) => { f.textContent = placed[j] ? placed[j].t : ""; f.classList.toggle("on", !!placed[j]); });
+    $("tiles").innerHTML = q.tiles.filter(t => !placed.includes(t)).map(t => '<button class="sent" data-k="' + t.k + '">' + esc(t.t) + "</button>").join("");
+    $("tiles").querySelectorAll(".sent").forEach(b => b.onclick = () => { const t = q.tiles.find(x => x.k === +b.dataset.k); placed[placed.indexOf(null)] = t; draw(); });
+    $("chk").classList.toggle("hidden", placed.includes(null));
+  };
+  $("stage").querySelectorAll(".fill").forEach((f, j) => f.onclick = () => { if (!f.dataset.done && placed[j]) { placed[j] = null; draw(); } });
+  $("chk").onclick = () => {
+    const ok = placed.every((t, j) => t.k === j);
+    grade(ok, () => {
+      $("chk").remove();
+      $("stage").querySelectorAll(".fill").forEach((f, j) => { f.dataset.done = 1; f.classList.add(placed[j].k === j ? "right" : "wrong"); });
+    }, placed.map(t => t.t.split(" ").slice(0, 3).join(" ") + "…").join(" → "), q.items.map(t => t.split(" ").slice(0, 3).join(" ") + "…").join(" → "));
+  };
+  draw();
+}
+function writeUI(q) {
+  const ta = $("ta"), lis = $("cl").querySelectorAll("li");
+  const test = t => {
+    const low = " " + t.toLowerCase().replace(/\s+/g, " ") + " ";
+    return q.checks.map(c => (c.any ? c.any.some(w => low.includes(w)) : !c.none.some(w => low.includes(w))) && t.trim().length > 0);
+  };
+  ta.oninput = () => {
+    const n = words(ta.value), r = test(ta.value);
+    r.forEach((v, j) => lis[j].classList.toggle("on", v));
+    const okLen = n >= q.minWords && n <= q.maxWords;
+    $("len").classList.toggle("on", okLen);
+    $("wc").textContent = n + " words";
+    $("sub").disabled = n < q.minWords;
+  };
+  $("sub").onclick = () => {
+    const r = test(ta.value), n = words(ta.value), okLen = n >= q.minWords && n <= q.maxWords;
+    const got = r.filter(Boolean).length + (okLen ? 1 : 0), max = r.length + 1;
+    S.pts += got * 5; S.writing.push({ q: q.q, label: q.label || "My writing", text: ta.value.trim(), got, max });
+    ta.readOnly = true; $("sub").remove();
+    feedback(got === max, (got === max ? "Brilliant — every box is ticked! " : got + " of " + max + " boxes ticked. ") + "+" + got * 5 + " pts. " + (q.explain || ""));
+    updateTop();
+  };
+}
+
+// ---------- Essay Domino: rebuild the model essay sentence by sentence ----------
+function chainPool(q) {
+  const later = []; let after = false;
+  S.qs.forEach(x => { if (x === q) after = true; if (after && x.type === "chain") x.steps.forEach(st => later.push({ t: st.t, why: "Not yet — this is the " + st.label + " of " + x.para + "." })); });
+  return later;
+}
+function chainUI(q) {
+  let step = 0, mistakes = 0;
+  const pool = chainPool(q);
+  const drawEssay = () => {
+    const done = S.built.map(p => '<div class="para ' + p.tone + '"><span class="pl">' + esc(p.para) + "</span>" + p.items.map(it => '<span class="fn">' + esc(it.label) + "</span>" + esc(it.t) + " ").join("") + "</div>").join("");
+    const cur = q.steps.slice(0, step).map(st => '<span class="fn">' + esc(st.label) + "</span>" + esc(st.t) + " ").join("");
+    const nxt = step < q.steps.length ? '<span class="slotnext">Next tile: <b>' + (step + 1) + ". " + esc(q.steps[step].label) + "</b> — " + esc(q.steps[step].hint) + "</span>" : "";
+    $("essay").innerHTML = done + '<div class="para ' + q.tone + ' now"><span class="pl">' + esc(q.para) + "</span>" + cur + nxt + "</div>";
+  };
+  const drawTiles = () => {
+    if (step >= q.steps.length) { $("tiles").innerHTML = ""; return; }
+    const right = { t: q.steps[step].t, ok: true };
+    const others = shuffle(pool.filter(p => p.t !== right.t && !q.steps.slice(0, step).some(st => st.t === p.t)).concat(q.traps || [])).slice(0, 2);
+    const opts = shuffle([right].concat(others));
+    $("tiles").innerHTML = opts.map((o, j) => '<button class="sent" data-j="' + j + '">' + esc(o.t) + "</button>").join("");
+    $("tiles").querySelectorAll(".sent").forEach(b => b.onclick = () => {
+      const o = opts[+b.dataset.j];
+      if (o.ok) {
+        step++; $("why").innerHTML = ""; drawEssay();
+        if (step < q.steps.length) drawTiles(); else finishChain();
+      } else {
+        mistakes++; b.classList.remove("wrong"); void b.offsetWidth; b.classList.add("wrong"); b.disabled = true;
+        $("why").innerHTML = '<p class="why">' + esc(o.why) + "</p>";
+      }
+    });
+  };
+  const finishChain = () => {
+    S.built.push({ para: q.para, tone: q.tone, items: q.steps.map(st => ({ label: st.label, t: st.t })) });
+    $("tiles").innerHTML = "";
+    grade(mistakes === 0, () => {}, mistakes === 0 ? "no wrong tiles" : mistakes + " wrong tile" + (mistakes > 1 ? "s" : ""), q.steps.map(st => st.label).join(" → "));
+  };
+  drawEssay(); drawTiles();
+}
+function gapsUI(q) {
+  const gaps = [...$("stage").querySelectorAll(".gap")], placed = Array(gaps.length).fill(null);
+  let sel = null;
+  const draw = () => {
+    gaps.forEach((g, j) => { g.textContent = placed[j] ? placed[j].t : ""; g.classList.toggle("on", !!placed[j]); g.classList.toggle("sel", sel === j); });
+    $("bank").innerHTML = q.tiles.filter(t => !placed.includes(t)).map(t => '<button data-k="' + t.k + '">' + esc(t.t) + "</button>").join("");
+    $("bank").querySelectorAll("button").forEach(b => b.onclick = () => {
+      const t = q.tiles.find(x => x.k === +b.dataset.k);
+      const j = sel !== null && !placed[sel] ? sel : placed.indexOf(null);
+      if (j < 0) return; placed[j] = t; sel = null; draw();
+    });
+    $("chk").classList.toggle("hidden", placed.includes(null));
+  };
+  gaps.forEach((g, j) => g.onclick = () => { if (g.dataset.done) return; if (placed[j]) { placed[j] = null; sel = j; } else sel = sel === j ? null : j; draw(); });
+  $("chk").onclick = () => {
+    const ok = placed.every((t, j) => t.t === q.ans[j]);
+    grade(ok, () => {
+      $("chk").remove(); $("bank").remove();
+      gaps.forEach((g, j) => { g.dataset.done = 1; const r = placed[j].t === q.ans[j]; g.classList.add(r ? "right" : "wrong"); if (!r) g.insertAdjacentHTML("afterend", '<span class="fix">→ ' + esc(q.ans[j]) + "</span>"); });
+    }, placed.map(t => t.t).join(" · "), q.ans.join(" · "));
+  };
+  draw();
+}
+const norm = t => t.toLowerCase().replace(/[’`]/g, "'").replace(/[.,;:!?]+$/g, "").replace(/\s+/g, " ").trim();
+function typeUI(q) {
+  const ans = [...q.text.matchAll(/\[\[(.+?)\]\]/g)].map(m => m[1].split("|"));
+  const ins = [...$("stage").querySelectorAll(".tin")];
+  ins.forEach((inp, j) => inp.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); (ins[j + 1] || $("chk")).focus(); } }));
+  $("chk").onclick = () => {
+    if (ins.some(inp => !inp.value.trim())) { const e = ins.find(inp => !inp.value.trim()); e.focus(); return; }
+    const res = ins.map((inp, j) => ans[j].some(a => norm(a) === norm(inp.value)));
+    grade(res.every(Boolean), () => {
+      $("chk").remove();
+      ins.forEach((inp, j) => { inp.readOnly = true; inp.classList.add(res[j] ? "right" : "wrong"); if (!res[j]) inp.insertAdjacentHTML("afterend", '<span class="fix">→ ' + esc(ans[j][0]) + "</span>"); });
+    }, ins.map(inp => inp.value.trim()).join(" · "), ans.map(a => a[0]).join(" · "));
+  };
+  setTimeout(() => ins[0] && ins[0].focus({ preventScroll: true }), 50);
+}
+function grade(ok, mark, given, correct) {
+  const q = S.qs[S.i];
+  mark();
+  S.res.push({ q: q.q, sec: q.sec, ok, given, correct });
+  if (ok) {
+    S.right++; S.streak++; S.best = Math.max(S.best, S.streak); S.pts += 10;
+    if (S.streak >= 3) { S.pts += 5; toast("🔥 Streak x" + S.streak + "  +5"); $("streak").classList.add("hot"); setTimeout(() => $("streak").classList.remove("hot"), 300); }
+  } else S.streak = 0;
+  updateTop();
+  feedback(ok, (ok ? "Spot on! " : "Not quite. ") + (q.explain || ""));
+}
+function feedback(ok, text) {
+  const last = S.i === S.qs.length - 1;
+  $("fb").innerHTML = '<div class="fb ' + (ok ? "ok" : "no") + '">' + AV() + '<div class="hand">' + esc(text) + "</div></div>" +
+    '<button class="btn next" id="nx">' + (last ? "Reach " + esc(DATA.stamp) + " 🏁" : "Next →") + "</button>";
+  $("nx").onclick = () => { if (last) finish(); else { S.i++; ask(true); scrollTo(0, 0); } };
+  $("nx").scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+function toast(t) { const d = document.createElement("div"); d.className = "toast"; d.textContent = t; document.body.appendChild(d); setTimeout(() => d.remove(), 1500); }
+
+// ---------- passport ----------
+function stampSVG(pct) {
+  const col = pct >= 86 ? "#1d3b8b" : pct >= 71 ? "#0e8a86" : pct >= 56 ? "#b86f00" : "#b8324a";
+  const ring = "STOP " + String(DATA.lesson).padStart(2, "0") + " · " + DATA.genre.toUpperCase() + " · SILK ROAD WRITERS · ";
+  return '<svg class="stamp" viewBox="0 0 200 200"><defs><path id="ring" d="M100 100 m-74 0 a74 74 0 1 1 148 0 a74 74 0 1 1 -148 0"/></defs>' +
+    '<g fill="none" stroke="' + col + '"><circle cx="100" cy="100" r="94" stroke-width="5"/><circle cx="100" cy="100" r="60" stroke-width="2.5"/></g>' +
+    '<text font-family="Nunito" font-weight="900" font-size="12" letter-spacing="1.4" fill="' + col + '"><textPath href="#ring">' + esc(ring) + "</textPath></text>" +
+    '<use href="#camel" x="78" y="58" width="44" height="33" style="color:' + col + '"/>' +
+    '<text x="100" y="112" text-anchor="middle" font-family="Fraunces, Georgia" font-weight="900" font-size="17" fill="' + col + '">' + esc(DATA.stamp.toUpperCase()) + "</text>" +
+    '<text x="100" y="142" text-anchor="middle" font-family="Fraunces, Georgia" font-weight="900" font-size="27" fill="' + col + '">' + pct + "%</text></svg>";
+}
+function finish() {
+  const key = "caravan-" + DATA.lesson + "-attempts";
+  const attempt = (parseInt(store(key) || "0", 10) || 0) + 1; store(key, String(attempt));
+  const pct = Math.round(100 * S.right / S.auto);
+  const bk = "caravan-" + DATA.lesson + "-best"; if (pct > (parseInt(store(bk) || "-1", 10))) store(bk, String(pct));
+  const band = pct >= 86 ? "Master Caravaneer" : pct >= 71 ? "Skilled Traveller" : pct >= 56 ? "Brave Explorer" : "Keep travelling!";
+  const mins = Math.max(1, Math.round((Date.now() - S.started) / 60000));
+  const bars = DATA.sections.map((s, si) => {
+    const r = S.res.filter(x => x.sec === si); if (!r.length) return "";
+    const ok = r.filter(x => x.ok).length;
+    return '<div class="r"><span>' + esc(s.title) + '</span><div class="b"><i style="width:' + (100 * ok / r.length) + '%"></i></div><span>' + ok + "/" + r.length + "</span></div>";
+  }).join("");
+  const w = S.writing.map(x => '<div class="mywrite"><small>' + esc(x.label) + ' · checklist ' + x.got + "/" + x.max + "</small>" + esc(x.text) + "</div>").join("");
+  $("passport").innerHTML = '<div class="head"><span>Silk Road Passport</span><span>Stop ' + DATA.lesson + "</span></div>" +
+    '<div class="stampwrap">' + stampSVG(pct) + "</div>" +
+    '<div class="who">' + esc($("name").value.trim()) + '</div><div class="grp">Group ' + esc($("group").value.trim()) + " · " + band + "</div>" +
+    '<div class="meta"><div>Correct<b>' + S.right + " / " + S.auto + "</b></div><div>Points<b>" + S.pts + "</b></div>" +
+    "<div>Best streak<b>🔥 " + S.best + "</b></div><div>Attempt<b>#" + attempt + " · " + mins + " min</b></div></div>" +
+    '<div class="bars" style="margin-top:12px">' + bars + "</div>" + w +
+    '<div class="grp" style="margin-top:10px">' + new Date().toLocaleString("en-GB") + "</div>" +
+    '<div class="shot">📸 Screenshot this passport and send it to your teacher</div>';
+  $("review").innerHTML = "<h2 class='serif' style='margin:0 0 6px;color:var(--deep)'>My answers</h2>" + S.res.map(x =>
+    '<div class="it' + (x.ok ? "" : " x") + '">' + esc(x.q) + "<br><b>" + esc(x.given || "—") + "</b>" + (x.ok ? "" : "<br>✓ " + esc(x.correct)) + "</div>").join("");
+  $("review").classList.add("hidden");
+  show("end");
+}
+$("showrev").onclick = () => $("review").classList.toggle("hidden");
+$("again").onclick = () => { build(); show("game"); drawRoute(); ask(); };
+</script>
+</body>
+</html>
